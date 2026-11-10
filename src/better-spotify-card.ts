@@ -35,6 +35,7 @@ export class BetterSpotifyCard extends LitElement {
 
   private searchDebounceTimer?: number;
   private positionTickerInterval?: number;
+  private refreshStateInterval?: number;
   private boundKeydownHandler?: (e: KeyboardEvent) => void;
 
   public setConfig(config: BetterSpotifyCardConfig): void {
@@ -71,6 +72,7 @@ export class BetterSpotifyCard extends LitElement {
     };
     window.addEventListener('keydown', this.boundKeydownHandler);
     this.startPositionTicker();
+    this.startPlaybackRefresh();
   }
 
   public disconnectedCallback(): void {
@@ -79,6 +81,28 @@ export class BetterSpotifyCard extends LitElement {
       window.removeEventListener('keydown', this.boundKeydownHandler);
     }
     this.stopPositionTicker();
+    this.stopPlaybackRefresh();
+  }
+
+  private startPlaybackRefresh(): void {
+    this.stopPlaybackRefresh();
+    // Immediate refresh on startup
+    if (this.hass && this.config?.entity) {
+      SpotifyService.refreshPlaybackState(this.hass, this.config.entity);
+    }
+    // Periodic refresh every 8 seconds
+    this.refreshStateInterval = window.setInterval(() => {
+      if (this.hass && this.config?.entity) {
+        SpotifyService.refreshPlaybackState(this.hass, this.config.entity);
+      }
+    }, 8000);
+  }
+
+  private stopPlaybackRefresh(): void {
+    if (this.refreshStateInterval) {
+      clearInterval(this.refreshStateInterval);
+      this.refreshStateInterval = undefined;
+    }
   }
 
   protected updated(changedProps: PropertyValues): void {
@@ -132,8 +156,11 @@ export class BetterSpotifyCard extends LitElement {
     }
     this.popupOpen = true;
     this.loadCurrentTabData();
-    // Also refresh devices list in background
+    // Also refresh devices list and playback state
     this.fetchDevices();
+    if (this.hass && this.config?.entity) {
+      SpotifyService.refreshPlaybackState(this.hass, this.config.entity);
+    }
   }
 
   private closePopup(): void {
@@ -490,7 +517,7 @@ export class BetterSpotifyCard extends LitElement {
   }
 
   /**
-   * Now Playing widget inside Popup (Docked at bottom)
+   * Now Playing widget inside Popup (Spotify Desktop Style at bottom)
    */
   private renderNowPlayingSection(entity: any): TemplateResult {
     const isPlaying = entity.state === 'playing';
@@ -502,19 +529,9 @@ export class BetterSpotifyCard extends LitElement {
 
     return html`
       <div class="now-playing-section">
-        <div class="now-playing-top">
-          ${picture
-            ? html`<img class="now-playing-cover" src=${picture} alt="Cover" />`
-            : html`<div class="now-playing-cover list-item-thumb">${icons.musicNote}</div>`}
-
-          <div class="now-playing-meta">
-            <div class="now-playing-title">${title}</div>
-            <div class="now-playing-artist">${artist}</div>
-          </div>
-        </div>
-
-        <!-- Single seek timeline -->
-        <div class="seek-container">
+        <!-- Line 1: Seek / timeline bar on top -->
+        <div class="desktop-seek-row">
+          <span class="desktop-seek-time">${formatSeconds(this.currentPosition)}</span>
           <input
             type="range"
             class="seek-slider"
@@ -524,33 +541,24 @@ export class BetterSpotifyCard extends LitElement {
             .value=${this.currentPosition}
             @change=${(e: Event) => this.handleSeek(e)}
           />
-          <div class="seek-times">
-            <span>${formatSeconds(this.currentPosition)}</span>
-            <span class="vol-indicator">Vol. ${volumeLevel}%</span>
-            <span>${formatSeconds(duration)}</span>
-          </div>
+          <span class="desktop-seek-time right">${formatSeconds(duration)}</span>
         </div>
 
-        <!-- Controls: Shuffle, Vol -, Prev, Play/Pause, Next, Vol + -->
-        <div class="player-actions-row">
-          <button
-            class="btn-shuffle-toggle ${entity.attributes.shuffle ? 'active' : ''}"
-            title=${entity.attributes.shuffle ? 'Mode aléatoire : activé (cliquer pour normal)' : 'Mode aléatoire : désactivé (cliquer pour aléatoire)'}
-            @click=${(e: Event) => this.handleToggleShuffle(e)}
-          >
-            ${icons.shuffle}
-          </button>
+        <!-- Line 2: 3-column Spotify Desktop row -->
+        <div class="desktop-player-row">
+          <!-- Left: Cover, Title, Artist -->
+          <div class="desktop-col-left">
+            ${picture
+              ? html`<img class="desktop-cover" src=${picture} alt="Cover" />`
+              : html`<div class="desktop-cover list-item-thumb">${icons.musicNote}</div>`}
+            <div class="desktop-meta">
+              <div class="desktop-title" title=${title}>${title}</div>
+              <div class="desktop-artist" title=${artist}>${artist}</div>
+            </div>
+          </div>
 
-          <button
-            class="btn-vol"
-            title="Baisser le volume (-5%)"
-            @click=${(e: Event) => this.handleVolumeStep(-5, e)}
-          >
-            ${icons.volumeLow}
-            <span>-</span>
-          </button>
-
-          <div class="controls-center-group">
+          <!-- Center: PREV PLAY NEXT -->
+          <div class="desktop-col-center">
             <button class="btn-icon" title="Précédent" @click=${(e: Event) => this.handlePrevious(e)}>
               ${icons.skipPrevious}
             </button>
@@ -566,14 +574,34 @@ export class BetterSpotifyCard extends LitElement {
             </button>
           </div>
 
-          <button
-            class="btn-vol"
-            title="Augmenter le volume (+5%)"
-            @click=${(e: Event) => this.handleVolumeStep(5, e)}
-          >
-            <span>+</span>
-            ${icons.volumeHigh}
-          </button>
+          <!-- Right: MODE LECTURE (Shuffle) VOLUME - VOLUME + -->
+          <div class="desktop-col-right">
+            <button
+              class="btn-shuffle-toggle ${entity.attributes.shuffle ? 'active' : ''}"
+              title=${entity.attributes.shuffle ? 'Mode aléatoire : activé' : 'Mode normal (cliquer pour activer l\'aléatoire)'}
+              @click=${(e: Event) => this.handleToggleShuffle(e)}
+            >
+              ${icons.shuffle}
+            </button>
+
+            <button
+              class="btn-vol"
+              title="Volume - (-5%)"
+              @click=${(e: Event) => this.handleVolumeStep(-5, e)}
+            >
+              ${icons.volumeLow}
+              <span>-</span>
+            </button>
+
+            <button
+              class="btn-vol"
+              title="Volume + (+5%)"
+              @click=${(e: Event) => this.handleVolumeStep(5, e)}
+            >
+              <span>+</span>
+              ${icons.volumeHigh}
+            </button>
+          </div>
         </div>
       </div>
     `;
@@ -966,7 +994,7 @@ if (!customElements.get('better-spotify-card')) {
 });
 
 console.info(
-  '%c BETTER-SPOTIFY-CARD %c v1.2.0 ',
+  '%c BETTER-SPOTIFY-CARD %c v1.3.0 ',
   'color: white; background: #1DB954; font-weight: 700; border-radius: 3px 0 0 3px;',
   'color: white; background: #282828; font-weight: 700; border-radius: 0 3px 3px 0;'
 );

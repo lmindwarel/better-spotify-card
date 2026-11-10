@@ -590,66 +590,40 @@ export const cardStyles = css`
   }
 
   /* ======================================================== */
-  /* NOW PLAYING COMPONENT (DOCKED AT BOTTOM OF POPUP)        */
+  /* NOW PLAYING COMPONENT (SPOTIFY DESKTOP STYLE AT BOTTOM)  */
   /* ======================================================== */
   .now-playing-section {
-    background: linear-gradient(0deg, #121212 0%, #1a1a1a 100%);
-    padding: 14px 18px 16px 18px;
+    background: linear-gradient(0deg, #121212 0%, #1c1c1c 100%);
+    padding: 10px 16px 14px 16px;
     border-top: 1px solid var(--bsc-border);
-    box-shadow: 0 -6px 20px rgba(0, 0, 0, 0.5);
+    box-shadow: 0 -8px 24px rgba(0, 0, 0, 0.6);
     flex-shrink: 0;
-  }
-
-  .now-playing-top {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    margin-bottom: 10px;
-  }
-
-  .now-playing-cover {
-    width: 48px;
-    height: 48px;
-    min-width: 48px;
-    border-radius: 8px;
-    background: #282828;
-    object-fit: cover;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
-  }
-
-  .now-playing-meta {
-    flex: 1;
-    min-width: 0;
-  }
-
-  .now-playing-title {
-    font-size: 14.5px;
-    font-weight: 700;
-    color: var(--bsc-text);
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-
-  .now-playing-artist {
-    font-size: 12.5px;
-    color: var(--bsc-text-secondary);
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    margin-top: 1px;
-  }
-
-  /* Single seek bar */
-  .seek-container {
     display: flex;
     flex-direction: column;
-    gap: 3px;
-    margin-bottom: 8px;
+    gap: 8px;
+  }
+
+  /* Line 1: Seek / timeline bar on top */
+  .desktop-seek-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+  }
+
+  .desktop-seek-time {
+    font-size: 11px;
+    color: var(--bsc-text-muted);
+    min-width: 32px;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .desktop-seek-time.right {
+    text-align: right;
   }
 
   .seek-slider {
-    width: 100%;
+    flex: 1;
     -webkit-appearance: none;
     appearance: none;
     height: 4px;
@@ -681,33 +655,73 @@ export const cardStyles = css`
     background: var(--bsc-primary);
   }
 
-  .seek-times {
-    display: flex;
-    justify-content: space-between;
-    font-size: 10.5px;
-    color: var(--bsc-text-muted);
-    font-variant-numeric: tabular-nums;
-  }
-
-  /* Controls row with Volume - and Volume + buttons */
-  .player-actions-row {
+  /* Line 2: 3-column Spotify Desktop row */
+  .desktop-player-row {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 0 4px;
+    gap: 10px;
+    width: 100%;
   }
 
-  .controls-center-group {
+  /* Col Left: Cover, Title, Artist */
+  .desktop-col-left {
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 10px;
+    flex: 1;
+    min-width: 0;
+  }
+
+  .desktop-cover {
+    width: 44px;
+    height: 44px;
+    min-width: 44px;
+    border-radius: 6px;
+    background: #282828;
+    object-fit: cover;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+  }
+
+  .desktop-meta {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+  }
+
+  .desktop-title {
+    font-size: 13.5px;
+    font-weight: 600;
+    color: var(--bsc-text);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .desktop-artist {
+    font-size: 12px;
+    color: var(--bsc-text-secondary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  /* Col Center: Prev, Play/Pause, Next */
+  .desktop-col-center {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    flex-shrink: 0;
   }
 
   .btn-play-large {
     background: var(--bsc-text);
     color: #000;
-    width: 42px;
-    height: 42px;
+    width: 40px;
+    height: 40px;
     border-radius: 50%;
     border: none;
     display: flex;
@@ -732,20 +746,29 @@ export const cardStyles = css`
     fill: #000;
   }
 
-  /* Volume Buttons */
+  /* Col Right: Mode Lecture, Vol -, Vol + */
+  .desktop-col-right {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 6px;
+    flex: 1;
+    min-width: 0;
+  }
+
   .btn-vol {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: 4px;
+    gap: 2px;
     background: rgba(255, 255, 255, 0.08);
     border: 1px solid rgba(255, 255, 255, 0.06);
     color: var(--bsc-text-secondary);
     cursor: pointer;
-    height: 34px;
-    min-width: 42px;
-    padding: 0 10px;
-    border-radius: 17px;
+    height: 32px;
+    min-width: 36px;
+    padding: 0 8px;
+    border-radius: 16px;
     font-size: 11.5px;
     font-weight: 600;
     transition: background 0.15s ease, color 0.15s ease, transform 0.1s ease;
@@ -761,8 +784,39 @@ export const cardStyles = css`
   }
 
   .btn-vol svg {
-    width: 17px;
-    height: 17px;
+    width: 15px;
+    height: 15px;
+    fill: currentColor;
+  }
+
+  .btn-shuffle-toggle {
+    background: transparent;
+    border: none;
+    color: var(--bsc-text-secondary);
+    cursor: pointer;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: color 0.15s ease, background 0.15s ease, transform 0.1s ease;
+    padding: 0;
+  }
+
+  .btn-shuffle-toggle:hover {
+    color: var(--bsc-text);
+    background: rgba(255, 255, 255, 0.1);
+  }
+
+  .btn-shuffle-toggle.active {
+    color: var(--bsc-primary);
+    background: rgba(29, 185, 84, 0.16);
+  }
+
+  .btn-shuffle-toggle svg {
+    width: 18px;
+    height: 18px;
     fill: currentColor;
   }
 

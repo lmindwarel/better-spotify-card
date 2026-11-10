@@ -3,6 +3,28 @@ import { SpotifyConnectDevice, SpotifyPlaylist, SpotifyTrack } from '../types/sp
 
 export class SpotifyService {
   /**
+   * Request SpotifyPlus / Home Assistant to refresh playback state from Spotify Web API
+   */
+  public static async refreshPlaybackState(
+    hass: HomeAssistant,
+    entityId: string
+  ): Promise<void> {
+    try {
+      await hass.callService('spotifyplus', 'trigger_scan_interval', {
+        entity_id: entityId,
+      });
+    } catch (e) {
+      try {
+        await hass.callService('homeassistant', 'update_entity', {
+          entity_id: entityId,
+        });
+      } catch (err) {
+        // ignore
+      }
+    }
+  }
+
+  /**
    * Helper to call a SpotifyPlus service with response data via Home Assistant WebSocket
    */
   private static async callSpotifyPlusWS(
