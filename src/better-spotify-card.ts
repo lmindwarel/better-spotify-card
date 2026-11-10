@@ -261,6 +261,15 @@ export class BetterSpotifyCard extends LitElement {
     await SpotifyService.setVolume(this.hass, this.config.entity, vol);
   }
 
+  private async handleVolumeStep(deltaPercent: number, e?: Event): Promise<void> {
+    e?.stopPropagation();
+    const entity = this.hass.states[this.config.entity];
+    if (!entity) return;
+    const currentVol = Math.round((entity.attributes.volume_level ?? 0.5) * 100);
+    const newVol = Math.max(0, Math.min(100, currentVol + deltaPercent));
+    await SpotifyService.setVolume(this.hass, this.config.entity, newVol);
+  }
+
   private async handleSelectDevice(device: SpotifyConnectDevice): Promise<void> {
     await SpotifyService.transferPlayback(this.hass, this.config.entity, device.id);
     await this.fetchDevices();
@@ -365,9 +374,6 @@ export class BetterSpotifyCard extends LitElement {
     return html`
       <div class="bubble-backdrop" @click=${() => this.closePopup()}>
         <div class="bubble-sheet" @click=${(e: Event) => e.stopPropagation()}>
-          <!-- Grab handle -->
-          <div class="sheet-handle" @click=${() => this.closePopup()}></div>
-
           <!-- Header -->
           <div class="sheet-header">
             <div class="sheet-header-left">
@@ -387,10 +393,7 @@ export class BetterSpotifyCard extends LitElement {
             </button>
           </div>
 
-          <!-- Now Playing Section (Android style) -->
-          ${this.renderNowPlayingSection(entity)}
-
-          <!-- Tab Bar (Android bottom-bar style) -->
+          <!-- Menu Tabs (placed at top for natural navigation) -->
           <div class="tab-bar">
             <button
               class="tab-btn ${this.activeTab === 'liked' ? 'active' : ''}"
@@ -422,23 +425,25 @@ export class BetterSpotifyCard extends LitElement {
             </button>
           </div>
 
-          <!-- Tab Content Body -->
+          <!-- Tab Content Body (middle scrollable area) -->
           <div class="tab-content">
             ${this.renderActiveTabContent(entity)}
           </div>
+
+          <!-- Now Playing Player (docked at the bottom) -->
+          ${this.renderNowPlayingSection(entity)}
         </div>
       </div>
     `;
   }
 
   /**
-   * Now Playing widget inside Popup
+   * Now Playing widget inside Popup (Docked at bottom)
    */
   private renderNowPlayingSection(entity: any): TemplateResult {
     const isPlaying = entity.state === 'playing';
     const title = entity.attributes.media_title || 'Aucun titre en cours';
-    const artist = entity.attributes.media_artist || 'Sélectionnez un morceau ci-dessous';
-    const album = entity.attributes.media_album_name || '';
+    const artist = entity.attributes.media_artist || 'Sélectionnez un morceau ci-dessus';
     const picture = entity.attributes.entity_picture;
     const duration = entity.attributes.media_duration || 0;
     const volumeLevel = Math.round((entity.attributes.volume_level ?? 0.5) * 100);
@@ -453,11 +458,10 @@ export class BetterSpotifyCard extends LitElement {
           <div class="now-playing-meta">
             <div class="now-playing-title">${title}</div>
             <div class="now-playing-artist">${artist}</div>
-            ${album ? html`<div class="now-playing-album">${album}</div>` : ''}
           </div>
         </div>
 
-        <!-- Seek timeline -->
+        <!-- Single seek timeline -->
         <div class="seek-container">
           <input
             type="range"
@@ -470,40 +474,46 @@ export class BetterSpotifyCard extends LitElement {
           />
           <div class="seek-times">
             <span>${formatSeconds(this.currentPosition)}</span>
+            <span class="vol-indicator">Vol. ${volumeLevel}%</span>
             <span>${formatSeconds(duration)}</span>
           </div>
         </div>
 
-        <!-- Controls: Prev, Play/Pause, Next -->
+        <!-- Controls: Vol -, Prev, Play/Pause, Next, Vol + -->
         <div class="player-actions-row">
-          <button class="btn-icon" title="Précédent" @click=${(e: Event) => this.handlePrevious(e)}>
-            ${icons.skipPrevious}
-          </button>
           <button
-            class="btn-play-large"
-            title=${isPlaying ? 'Pause' : 'Lecture'}
-            @click=${(e: Event) => this.handlePlayPause(e)}
+            class="btn-vol"
+            title="Baisser le volume (-5%)"
+            @click=${(e: Event) => this.handleVolumeStep(-5, e)}
           >
-            ${isPlaying ? icons.pause : icons.play}
+            ${icons.volumeLow}
+            <span>-</span>
           </button>
-          <button class="btn-icon" title="Suivant" @click=${(e: Event) => this.handleNext(e)}>
-            ${icons.skipNext}
-          </button>
-        </div>
 
-        <!-- Volume slider -->
-        <div class="volume-row">
-          <span class="volume-icon">${icons.volumeLow}</span>
-          <input
-            type="range"
-            class="volume-slider"
-            min="0"
-            max="100"
-            step="1"
-            .value=${volumeLevel}
-            @input=${(e: Event) => this.handleVolume(e)}
-          />
-          <span class="volume-icon">${icons.volumeHigh}</span>
+          <div class="controls-center-group">
+            <button class="btn-icon" title="Précédent" @click=${(e: Event) => this.handlePrevious(e)}>
+              ${icons.skipPrevious}
+            </button>
+            <button
+              class="btn-play-large"
+              title=${isPlaying ? 'Pause' : 'Lecture'}
+              @click=${(e: Event) => this.handlePlayPause(e)}
+            >
+              ${isPlaying ? icons.pause : icons.play}
+            </button>
+            <button class="btn-icon" title="Suivant" @click=${(e: Event) => this.handleNext(e)}>
+              ${icons.skipNext}
+            </button>
+          </div>
+
+          <button
+            class="btn-vol"
+            title="Augmenter le volume (+5%)"
+            @click=${(e: Event) => this.handleVolumeStep(5, e)}
+          >
+            <span>+</span>
+            ${icons.volumeHigh}
+          </button>
         </div>
       </div>
     `;

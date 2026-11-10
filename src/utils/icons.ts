@@ -73,6 +73,18 @@ export const icons = {
     </svg>
   `,
 
+  volumeMinus: svg`
+    <svg viewBox="0 0 24 24">
+      <path d="M18.5 12c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM5 9v6h4l5 5V4L9 9H5zm10 2h6v2h-6v-2z"/>
+    </svg>
+  `,
+
+  volumePlus: svg`
+    <svg viewBox="0 0 24 24">
+      <path d="M3 9v6h4l5 5V4L7 9H3zm11 2h2V9h2v2h2v2h-2v2h-2v-2h-2v-2zm-1.5-3.03V5.9c2.89.86 5 3.54 5 6.1h-2c0-1.77-1.02-3.29-2.5-4.03z"/>
+    </svg>
+  `,
+
   close: svg`
     <svg viewBox="0 0 24 24">
       <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
