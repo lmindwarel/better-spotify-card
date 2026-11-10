@@ -18,12 +18,19 @@ export class BetterSpotifyCard extends LitElement {
 
   @state() private playlists: SpotifyPlaylist[] = [];
   @state() private likedTracks: SpotifyTrack[] = [];
+  @state() private likedTotal = 0;
+  @state() private likedOffset = 0;
+  @state() private loadingMoreLiked = false;
+
   @state() private searchResults: SpotifyTrack[] = [];
   @state() private devices: SpotifyConnectDevice[] = [];
 
   @state() private selectedPlaylist: SpotifyPlaylist | null = null;
   @state() private playlistTracks: SpotifyTrack[] = [];
+  @state() private playlistTotal = 0;
+  @state() private playlistOffset = 0;
   @state() private loadingPlaylistTracks = false;
+  @state() private loadingMorePlaylistTracks = false;
 
   @state() private loadingPlaylists = false;
   @state() private loadingLiked = false;
@@ -193,15 +200,57 @@ export class BetterSpotifyCard extends LitElement {
     }
   }
 
+  private getDefaultDevice(): string | undefined {
+    return this.config.default_device || localStorage.getItem('better_spotify_default_device') || undefined;
+  }
+
+  private setDefaultDevice(deviceId: string): void {
+    const current = this.getDefaultDevice();
+    if (current === deviceId) {
+      localStorage.removeItem('better_spotify_default_device');
+    } else {
+      localStorage.setItem('better_spotify_default_device', deviceId);
+    }
+    this.requestUpdate();
+  }
+
+  private getTargetDeviceId(): string | undefined {
+    if (!this.hass || !this.config?.entity) return undefined;
+    const entity = this.hass.states[this.config.entity];
+    if (entity?.attributes?.source) return undefined;
+    return this.getDefaultDevice() || this.devices[0]?.id || this.devices[0]?.name;
+  }
+
   private async fetchLikedTracks(): Promise<void> {
     if (this.loadingLiked) return;
     this.loadingLiked = true;
     try {
-      this.likedTracks = await SpotifyService.getLikedTracks(this.hass, this.config.entity, 500);
+      this.likedTracks = [];
+      this.likedOffset = 0;
+      this.likedTotal = 0;
+      const page = await SpotifyService.getLikedTracks(this.hass, this.config.entity, 50, 0);
+      this.likedTracks = page.items;
+      this.likedTotal = page.total;
+      this.likedOffset = page.items.length;
     } catch (e) {
       console.error(e);
     } finally {
       this.loadingLiked = false;
+    }
+  }
+
+  private async loadMoreLikedTracks(): Promise<void> {
+    if (this.loadingMoreLiked || this.likedTracks.length >= this.likedTotal) return;
+    this.loadingMoreLiked = true;
+    try {
+      const page = await SpotifyService.getLikedTracks(this.hass, this.config.entity, 50, this.likedOffset);
+      this.likedTracks = [...this.likedTracks, ...page.items];
+      this.likedOffset += page.items.length;
+      this.likedTotal = page.total;
+    } catch (e) {
+      console.error(e);
+    } finally {
+      this.loadingMoreLiked = false;
     }
   }
 
@@ -312,14 +361,20 @@ export class BetterSpotifyCard extends LitElement {
   private async handleSelectPlaylist(playlist: SpotifyPlaylist): Promise<void> {
     this.selectedPlaylist = playlist;
     this.playlistTracks = [];
+    this.playlistOffset = 0;
+    this.playlistTotal = 0;
     this.loadingPlaylistTracks = true;
     try {
-      this.playlistTracks = await SpotifyService.getPlaylistTracks(
+      const page = await SpotifyService.getPlaylistTracks(
         this.hass,
         this.config.entity,
         playlist.id || playlist.uri,
-        500
+        50,
+        0
       );
+      this.playlistTracks = page.items;
+      this.playlistTotal = page.total;
+      this.playlistOffset = page.items.length;
     } catch (err) {
       console.error(err);
     } finally {
@@ -327,27 +382,66 @@ export class BetterSpotifyCard extends LitElement {
     }
   }
 
+  private async loadMorePlaylistTracks(): Promise<void> {
+    if (!this.selectedPlaylist || this.loadingMorePlaylistTracks || this.playlistTracks.length >= this.playlistTotal) return;
+    this.loadingMorePlaylistTracks = true;
+    try {
+      const page = await SpotifyService.getPlaylistTracks(
+        this.hass,
+        this.config.entity,
+        this.selectedPlaylist.id || this.selectedPlaylist.uri,
+        50,
+        this.playlistOffset
+      );
+      this.playlistTracks = [...this.playlistTracks, ...page.items];
+      this.playlistOffset += page.items.length;
+      this.playlistTotal = page.total;
+    } catch (err) {
+      console.error(err);
+    } finally {
+      this.loadingMorePlaylistTracks = false;
+    }
+  }
+
   private handleBackToPlaylists(): void {
     this.selectedPlaylist = null;
     this.playlistTracks = [];
+    this.playlistOffset = 0;
+    this.playlistTotal = 0;
+  }
+
+  private handleContentScroll(e: Event): void {
+    const el = e.target as HTMLElement;
+    if (!el) return;
+    const threshold = 300;
+    if (el.scrollHeight - el.scrollTop - el.clientHeight < threshold) {
+      if (this.activeTab === 'liked') {
+        this.loadMoreLikedTracks();
+      } else if (this.activeTab === 'playlists' && this.selectedPlaylist) {
+        this.loadMorePlaylistTracks();
+      }
+    }
   }
 
   private async handlePlayAllLiked(shuffle = false): Promise<void> {
+    const targetDev = this.getTargetDeviceId();
     if (shuffle) {
       await SpotifyService.setShuffle(this.hass, this.config.entity, true);
     }
-    await SpotifyService.playLikedTracks(this.hass, this.config.entity, this.likedTracks, 0);
+    await SpotifyService.playLikedTracks(this.hass, this.config.entity, this.likedTracks, 0, targetDev);
   }
 
   private async handlePlayAllPlaylist(playlist: SpotifyPlaylist, shuffle = false): Promise<void> {
+    const targetDev = this.getTargetDeviceId();
     if (shuffle) {
       await SpotifyService.setShuffle(this.hass, this.config.entity, true);
     }
-    await SpotifyService.playContext(this.hass, this.config.entity, playlist.uri, 0);
+    await SpotifyService.playContext(this.hass, this.config.entity, playlist.uri, 0, targetDev);
   }
 
   private async handlePlayPlaylistTrack(playlist: SpotifyPlaylist, index: number): Promise<void> {
-    await SpotifyService.playContext(this.hass, this.config.entity, playlist.uri, index);
+    const targetDev = this.getTargetDeviceId();
+    await SpotifyService.playContext(this.hass, this.config.entity, playlist.uri, index, targetDev);
   }
 
   private async handleToggleShuffle(e?: Event): Promise<void> {
@@ -360,13 +454,15 @@ export class BetterSpotifyCard extends LitElement {
   }
 
   private async handlePlayLikedTrack(index: number): Promise<void> {
-    await SpotifyService.playLikedTracks(this.hass, this.config.entity, this.likedTracks, index);
+    const targetDev = this.getTargetDeviceId();
+    await SpotifyService.playLikedTracks(this.hass, this.config.entity, this.likedTracks, index, targetDev);
   }
 
   private async handlePlaySearchTrack(index: number): Promise<void> {
+    const targetDev = this.getTargetDeviceId();
     const sliced = this.searchResults.slice(index);
     const uris = sliced.map((t) => t.uri);
-    await SpotifyService.playTracks(this.hass, this.config.entity, uris);
+    await SpotifyService.playTracks(this.hass, this.config.entity, uris, targetDev);
   }
 
   /* ======================================================== */
@@ -506,7 +602,7 @@ export class BetterSpotifyCard extends LitElement {
           </div>
 
           <!-- Tab Content Body (middle scrollable area) -->
-          <div class="tab-content">
+          <div class="tab-content" @scroll=${(e: Event) => this.handleContentScroll(e)}>
             ${this.renderActiveTabContent(entity)}
           </div>
 
@@ -651,7 +747,9 @@ export class BetterSpotifyCard extends LitElement {
 
     return html`
       <div class="tab-action-bar">
-        <div class="tab-action-title">${this.likedTracks.length} titres</div>
+        <div class="tab-action-title">
+          ${this.likedTracks.length}${this.likedTotal > 0 ? ` / ${this.likedTotal}` : ''} titres
+        </div>
         <div class="tab-action-buttons">
           <button
             class="btn-pill-play"
@@ -691,6 +789,9 @@ export class BetterSpotifyCard extends LitElement {
             </div>
           `;
         })}
+        ${this.loadingMoreLiked
+          ? html`<div class="loading-more-spinner"><div class="spinner"></div></div>`
+          : ''}
       </div>
     `;
   }
@@ -725,7 +826,9 @@ export class BetterSpotifyCard extends LitElement {
         </div>
 
         <div class="tab-action-bar">
-          <div class="tab-action-title">${this.playlistTracks.length} titres</div>
+          <div class="tab-action-title">
+            ${this.playlistTracks.length}${this.playlistTotal > 0 ? ` / ${this.playlistTotal}` : ''} titres
+          </div>
           <div class="tab-action-buttons">
             <button
               class="btn-pill-play"
@@ -758,7 +861,7 @@ export class BetterSpotifyCard extends LitElement {
               <div class="items-list">
                 ${this.playlistTracks.map((track, index) => {
                   const isCurrent = currentTrackTitle && track.name === currentTrackTitle;
-                  const trackCover = track.album?.images?.[0]?.url || cover;
+                  const trackCover = track.album?.images?.[0]?.url;
                   const artistNames = track.artists.map((a) => a.name).join(', ');
 
                   return html`
@@ -782,6 +885,9 @@ export class BetterSpotifyCard extends LitElement {
                     </div>
                   `;
                 })}
+                ${this.loadingMorePlaylistTracks
+                  ? html`<div class="loading-more-spinner"><div class="spinner"></div></div>`
+                  : ''}
               </div>
             `}
       `;
@@ -947,6 +1053,8 @@ export class BetterSpotifyCard extends LitElement {
       <div class="items-list">
         ${this.devices.map((device) => {
           const isActive = device.is_active || device.name === currentSource;
+          const defaultDev = this.getDefaultDevice();
+          const isDefault = defaultDev === device.id || defaultDev === device.name;
 
           return html`
             <div
@@ -959,11 +1067,26 @@ export class BetterSpotifyCard extends LitElement {
               </div>
 
               <div class="list-item-text">
-                <div class="list-item-title ${isActive ? 'active' : ''}">${device.name}</div>
+                <div class="list-item-title ${isActive ? 'active' : ''}">
+                  ${device.name}
+                  ${isDefault ? html`<span class="default-device-badge">⭐ Par défaut</span>` : ''}
+                </div>
                 <div class="list-item-subtitle">${device.type || 'Haut-parleur'}</div>
               </div>
 
-              ${isActive ? html`<div class="list-item-badge">Actif</div>` : ''}
+              <div class="list-item-right-actions">
+                ${isActive ? html`<div class="list-item-badge">Actif</div>` : ''}
+                <button
+                  class="btn-star-default ${isDefault ? 'is-default' : ''}"
+                  title=${isDefault ? 'Lecteur par défaut (cliquer pour retirer)' : 'Définir comme lecteur par défaut'}
+                  @click=${(e: Event) => {
+                    e.stopPropagation();
+                    this.setDefaultDevice(device.id || device.name);
+                  }}
+                >
+                  ${isDefault ? '⭐' : '☆'}
+                </button>
+              </div>
             </div>
           `;
         })}
@@ -988,7 +1111,7 @@ if (!customElements.get('better-spotify-card')) {
 });
 
 console.info(
-  '%c BETTER-SPOTIFY-CARD %c v1.4.0 ',
+  '%c BETTER-SPOTIFY-CARD %c v1.5.0 ',
   'color: white; background: #1DB954; font-weight: 700; border-radius: 3px 0 0 3px;',
   'color: white; background: #282828; font-weight: 700; border-radius: 0 3px 3px 0;'
 );

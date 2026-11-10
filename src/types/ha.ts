@@ -54,6 +54,7 @@ export interface LovelaceCardConfig {
 export interface BetterSpotifyCardConfig extends LovelaceCardConfig {
   entity: string;
   title?: string;
+  default_device?: string;
   hide_volume?: boolean;
   hide_connect?: boolean;
   default_tab?: 'playlists' | 'liked' | 'search' | 'devices';

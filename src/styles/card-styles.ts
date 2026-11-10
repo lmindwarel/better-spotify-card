@@ -1018,4 +1018,52 @@ export const cardStyles = css`
     height: 18px;
     fill: currentColor;
   }
+
+  .default-device-badge {
+    display: inline-block;
+    margin-left: 8px;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--bsc-accent);
+    background: rgba(29, 185, 84, 0.15);
+    border: 1px solid rgba(29, 185, 84, 0.3);
+    padding: 2px 7px;
+    border-radius: 12px;
+    vertical-align: middle;
+  }
+
+  .list-item-right-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-left: auto;
+  }
+
+  .btn-star-default {
+    background: transparent;
+    border: none;
+    font-size: 17px;
+    cursor: pointer;
+    padding: 6px;
+    border-radius: 50%;
+    line-height: 1;
+    transition: transform 0.15s ease, opacity 0.15s ease;
+    opacity: 0.7;
+  }
+
+  .btn-star-default:hover {
+    transform: scale(1.25);
+    opacity: 1;
+  }
+
+  .btn-star-default.is-default {
+    opacity: 1;
+    color: #ffd700;
+  }
+
+  .loading-more-spinner {
+    display: flex;
+    justify-content: center;
+    padding: 16px 0 8px 0;
+  }
 `;

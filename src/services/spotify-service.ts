@@ -1,5 +1,5 @@
 import { HomeAssistant } from '../types/ha';
-import { SpotifyConnectDevice, SpotifyPlaylist, SpotifyTrack } from '../types/spotify';
+import { SpotifyConnectDevice, SpotifyPage, SpotifyPlaylist, SpotifyTrack } from '../types/spotify';
 
 export class SpotifyService {
   /**
@@ -151,24 +151,26 @@ export class SpotifyService {
   }
 
   /**
-   * Get items (tracks) for a specific playlist
+   * Get paginated items (tracks) for a specific playlist
    */
   public static async getPlaylistTracks(
     hass: HomeAssistant,
     entityId: string,
     playlistIdOrUri: string,
-    limit = 500
-  ): Promise<SpotifyTrack[]> {
+    limit = 50,
+    offset = 0
+  ): Promise<SpotifyPage<SpotifyTrack>> {
     try {
       const playlistId = playlistIdOrUri.replace('spotify:playlist:', '').trim();
       const res = await this.callSpotifyPlusWS(hass, 'get_playlist_items', entityId, {
         playlist_id: playlistId,
-        limit: 50,
-        limit_total: limit,
+        limit: Math.min(limit, 50),
+        offset,
       });
 
-      const items = res?.result?.items || [];
-      return items
+      const rawItems = res?.result?.items || [];
+      const total = res?.result?.total ?? rawItems.length;
+      const items = rawItems
         .map((item: any) => {
           const t = item.track || item.item || item;
           if (!t || !t.name) return null;
@@ -194,29 +196,38 @@ export class SpotifyService {
           } as SpotifyTrack;
         })
         .filter((t: any): t is SpotifyTrack => t !== null);
+
+      return {
+        items,
+        total,
+        offset,
+        limit,
+      };
     } catch (err) {
       console.error('[BetterSpotifyCard] Erreur getPlaylistTracks:', err);
-      return [];
+      return { items: [], total: 0, offset, limit };
     }
   }
 
   /**
-   * Get user track favorites (Liked Songs)
+   * Get paginated user track favorites (Liked Songs)
    */
   public static async getLikedTracks(
     hass: HomeAssistant,
     entityId: string,
-    limit = 500
-  ): Promise<SpotifyTrack[]> {
+    limit = 50,
+    offset = 0
+  ): Promise<SpotifyPage<SpotifyTrack>> {
     try {
       const res = await this.callSpotifyPlusWS(hass, 'get_track_favorites', entityId, {
-        limit: 50,
-        limit_total: limit,
+        limit: Math.min(limit, 50),
+        offset,
         sort_result: false,
       });
 
-      const items = res?.result?.items || [];
-      return items.map((item: any) => {
+      const rawItems = res?.result?.items || [];
+      const total = res?.result?.total ?? rawItems.length;
+      const items = rawItems.map((item: any) => {
         const t = item.track || item.item || item;
         return {
           id: t.id || t.uri,
@@ -239,9 +250,16 @@ export class SpotifyService {
           is_playable: t.is_playable ?? true,
         };
       });
+
+      return {
+        items,
+        total,
+        offset,
+        limit,
+      };
     } catch (err) {
       console.error('[BetterSpotifyCard] Erreur getLikedTracks:', err);
-      return [];
+      return { items: [], total: 0, offset, limit };
     }
   }
 
@@ -292,14 +310,19 @@ export class SpotifyService {
     hass: HomeAssistant,
     entityId: string,
     contextUri: string,
-    offsetPosition = 0
+    offsetPosition = 0,
+    deviceId?: string
   ): Promise<void> {
     try {
-      await hass.callService('spotifyplus', 'player_media_play_context', {
+      const serviceData: Record<string, any> = {
         entity_id: entityId,
         context_uri: contextUri,
         offset_position: offsetPosition,
-      });
+      };
+      if (deviceId) {
+        serviceData.device_id = deviceId;
+      }
+      await hass.callService('spotifyplus', 'player_media_play_context', serviceData);
       return;
     } catch (e) {
       await hass.callService('media_player', 'play_media', {
@@ -316,17 +339,23 @@ export class SpotifyService {
   public static async playTracks(
     hass: HomeAssistant,
     entityId: string,
-    uris: string[]
+    uris: string[],
+    deviceId?: string
   ): Promise<void> {
     if (!uris || uris.length === 0) return;
     try {
       // spotifyplus accepts up to 50 items comma-separated
       const uriList = uris.slice(0, 50).join(',');
-      await hass.callService('spotifyplus', 'player_media_play_tracks', {
+      const serviceData: Record<string, any> = {
         entity_id: entityId,
         uris: uriList,
         position_ms: 0,
-      });
+        shuffle: false, // Explicitly keep order so the clicked track plays first
+      };
+      if (deviceId) {
+        serviceData.device_id = deviceId;
+      }
+      await hass.callService('spotifyplus', 'player_media_play_tracks', serviceData);
       return;
     } catch (e) {
       await hass.callService('media_player', 'play_media', {
@@ -344,15 +373,20 @@ export class SpotifyService {
     hass: HomeAssistant,
     entityId: string,
     allLikedTracks: SpotifyTrack[],
-    startIndex = 0
+    startIndex = 0,
+    deviceId?: string
   ): Promise<void> {
-    // If playing from beginning, use native player_media_play_track_favorites to play all favorites
+    // If playing from beginning (startIndex === 0), use native player_media_play_track_favorites to play all favorites
     if (startIndex === 0) {
       try {
-        await hass.callService('spotifyplus', 'player_media_play_track_favorites', {
+        const serviceData: Record<string, any> = {
           entity_id: entityId,
           limit_total: 500,
-        });
+        };
+        if (deviceId) {
+          serviceData.device_id = deviceId;
+        }
+        await hass.callService('spotifyplus', 'player_media_play_track_favorites', serviceData);
         return;
       } catch (err) {
         console.warn('[BetterSpotifyCard] player_media_play_track_favorites failed, falling back:', err);
@@ -362,12 +396,16 @@ export class SpotifyService {
     if (allLikedTracks && allLikedTracks.length > 0) {
       const sliced = allLikedTracks.slice(startIndex, startIndex + 50);
       const uris = sliced.map((t) => t.uri);
-      await this.playTracks(hass, entityId, uris);
+      await this.playTracks(hass, entityId, uris, deviceId);
     } else {
-      await hass.callService('spotifyplus', 'player_media_play_track_favorites', {
+      const serviceData: Record<string, any> = {
         entity_id: entityId,
         limit_total: 500,
-      });
+      };
+      if (deviceId) {
+        serviceData.device_id = deviceId;
+      }
+      await hass.callService('spotifyplus', 'player_media_play_track_favorites', serviceData);
     }
   }
 

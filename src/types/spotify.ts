@@ -47,3 +47,10 @@ export interface SpotifyConnectDevice {
   volume_percent?: number;
   supports_volume?: boolean;
 }
+
+export interface SpotifyPage<T> {
+  items: T[];
+  total: number;
+  offset: number;
+  limit: number;
+}
