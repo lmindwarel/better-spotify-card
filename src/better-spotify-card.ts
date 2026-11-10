@@ -44,6 +44,7 @@ export class BetterSpotifyCard extends LitElement {
   private positionTickerInterval?: number;
   private refreshStateInterval?: number;
   private boundKeydownHandler?: (e: KeyboardEvent) => void;
+  private initialRefreshDone = false;
 
   public setConfig(config: BetterSpotifyCardConfig): void {
     if (!config.entity) {
@@ -97,12 +98,12 @@ export class BetterSpotifyCard extends LitElement {
     if (this.hass && this.config?.entity) {
       SpotifyService.refreshPlaybackState(this.hass, this.config.entity);
     }
-    // Periodic refresh every 20 seconds
+    // Periodic refresh every 15 seconds
     this.refreshStateInterval = window.setInterval(() => {
       if (this.hass && this.config?.entity) {
         SpotifyService.refreshPlaybackState(this.hass, this.config.entity);
       }
-    }, 20000);
+    }, 15000);
   }
 
   private stopPlaybackRefresh(): void {
@@ -114,6 +115,12 @@ export class BetterSpotifyCard extends LitElement {
 
   protected updated(changedProps: PropertyValues): void {
     super.updated(changedProps);
+
+    // Initial state refresh as soon as hass is supplied
+    if (changedProps.has('hass') && this.hass && this.config?.entity && !this.initialRefreshDone) {
+      this.initialRefreshDone = true;
+      this.startPlaybackRefresh();
+    }
 
     // If popup opens or active tab changes, fetch required tab data
     if (changedProps.has('popupOpen') || changedProps.has('activeTab')) {
@@ -428,7 +435,7 @@ export class BetterSpotifyCard extends LitElement {
     if (shuffle) {
       await SpotifyService.setShuffle(this.hass, this.config.entity, true);
     }
-    await SpotifyService.playLikedTracks(this.hass, this.config.entity, this.likedTracks, 0, targetDev);
+    await SpotifyService.playAllLiked(this.hass, this.config.entity, targetDev);
   }
 
   private async handlePlayAllPlaylist(playlist: SpotifyPlaylist, shuffle = false): Promise<void> {
@@ -441,7 +448,15 @@ export class BetterSpotifyCard extends LitElement {
 
   private async handlePlayPlaylistTrack(playlist: SpotifyPlaylist, index: number): Promise<void> {
     const targetDev = this.getTargetDeviceId();
-    await SpotifyService.playContext(this.hass, this.config.entity, playlist.uri, index, targetDev);
+    const track = this.playlistTracks[index];
+    await SpotifyService.playContext(
+      this.hass,
+      this.config.entity,
+      playlist.uri,
+      index,
+      targetDev,
+      track?.uri
+    );
   }
 
   private async handleToggleShuffle(e?: Event): Promise<void> {
@@ -622,6 +637,7 @@ export class BetterSpotifyCard extends LitElement {
     const artist = entity.attributes.media_artist || 'Sélectionnez un morceau ci-dessus';
     const picture = entity.attributes.entity_picture;
     const duration = entity.attributes.media_duration || 0;
+    const progressPercent = duration > 0 ? Math.min(100, Math.max(0, (this.currentPosition / duration) * 100)) : 0;
     const volumeLevel = Math.round((entity.attributes.volume_level ?? 0.5) * 100);
 
     return html`
@@ -636,6 +652,10 @@ export class BetterSpotifyCard extends LitElement {
             max=${duration || 100}
             step="1"
             .value=${this.currentPosition}
+            style="--seek-percent: ${progressPercent}%;"
+            @input=${(e: Event) => {
+              this.currentPosition = Number((e.target as HTMLInputElement).value);
+            }}
             @change=${(e: Event) => this.handleSeek(e)}
           />
           <span class="desktop-seek-time right">${formatSeconds(duration)}</span>
@@ -1111,7 +1131,7 @@ if (!customElements.get('better-spotify-card')) {
 });
 
 console.info(
-  '%c BETTER-SPOTIFY-CARD %c v1.5.0 ',
+  '%c BETTER-SPOTIFY-CARD %c v1.6.0 ',
   'color: white; background: #1DB954; font-weight: 700; border-radius: 3px 0 0 3px;',
   'color: white; background: #282828; font-weight: 700; border-radius: 0 3px 3px 0;'
 );

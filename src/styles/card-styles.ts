@@ -628,7 +628,13 @@ export const cardStyles = css`
     appearance: none;
     height: 4px;
     border-radius: 2px;
-    background: rgba(255, 255, 255, 0.15);
+    background: linear-gradient(
+      to right,
+      var(--bsc-primary) 0%,
+      var(--bsc-primary) var(--seek-percent, 0%),
+      rgba(255, 255, 255, 0.2) var(--seek-percent, 0%),
+      rgba(255, 255, 255, 0.2) 100%
+    );
     outline: none;
     cursor: pointer;
     transition: height 0.15s ease;
@@ -652,7 +658,13 @@ export const cardStyles = css`
 
   .seek-slider:hover::-webkit-slider-thumb {
     transform: scale(1.2);
-    background: var(--bsc-primary);
+    background: #ffffff;
+  }
+
+  .seek-slider::-moz-range-progress {
+    background-color: var(--bsc-primary);
+    height: 4px;
+    border-radius: 2px;
   }
 
   /* Line 2: 3-column Spotify Desktop row */

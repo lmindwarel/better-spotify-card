@@ -304,14 +304,15 @@ export class SpotifyService {
   }
 
   /**
-   * Start playing a context (playlist, album, etc.) at an optional offset index
+   * Start playing a context (playlist, album, etc.) at an optional offset index or track URI
    */
   public static async playContext(
     hass: HomeAssistant,
     entityId: string,
     contextUri: string,
     offsetPosition = 0,
-    deviceId?: string
+    deviceId?: string,
+    offsetUri?: string
   ): Promise<void> {
     try {
       const serviceData: Record<string, any> = {
@@ -319,6 +320,9 @@ export class SpotifyService {
         context_uri: contextUri,
         offset_position: offsetPosition,
       };
+      if (offsetUri) {
+        serviceData.offset_uri = offsetUri;
+      }
       if (deviceId) {
         serviceData.device_id = deviceId;
       }
@@ -350,7 +354,6 @@ export class SpotifyService {
         entity_id: entityId,
         uris: uriList,
         position_ms: 0,
-        shuffle: false, // Explicitly keep order so the clicked track plays first
       };
       if (deviceId) {
         serviceData.device_id = deviceId;
@@ -367,37 +370,14 @@ export class SpotifyService {
   }
 
   /**
-   * Play liked tracks starting from a given index
+   * Play all liked tracks (favorites) using native SpotifyPlus endpoint
    */
-  public static async playLikedTracks(
+  public static async playAllLiked(
     hass: HomeAssistant,
     entityId: string,
-    allLikedTracks: SpotifyTrack[],
-    startIndex = 0,
     deviceId?: string
   ): Promise<void> {
-    // If playing from beginning (startIndex === 0), use native player_media_play_track_favorites to play all favorites
-    if (startIndex === 0) {
-      try {
-        const serviceData: Record<string, any> = {
-          entity_id: entityId,
-          limit_total: 500,
-        };
-        if (deviceId) {
-          serviceData.device_id = deviceId;
-        }
-        await hass.callService('spotifyplus', 'player_media_play_track_favorites', serviceData);
-        return;
-      } catch (err) {
-        console.warn('[BetterSpotifyCard] player_media_play_track_favorites failed, falling back:', err);
-      }
-    }
-
-    if (allLikedTracks && allLikedTracks.length > 0) {
-      const sliced = allLikedTracks.slice(startIndex, startIndex + 50);
-      const uris = sliced.map((t) => t.uri);
-      await this.playTracks(hass, entityId, uris, deviceId);
-    } else {
+    try {
       const serviceData: Record<string, any> = {
         entity_id: entityId,
         limit_total: 500,
@@ -406,6 +386,27 @@ export class SpotifyService {
         serviceData.device_id = deviceId;
       }
       await hass.callService('spotifyplus', 'player_media_play_track_favorites', serviceData);
+    } catch (err) {
+      console.warn('[BetterSpotifyCard] player_media_play_track_favorites failed:', err);
+    }
+  }
+
+  /**
+   * Play liked tracks starting from a specific clicked track index
+   */
+  public static async playLikedTracks(
+    hass: HomeAssistant,
+    entityId: string,
+    allLikedTracks: SpotifyTrack[],
+    startIndex = 0,
+    deviceId?: string
+  ): Promise<void> {
+    if (allLikedTracks && allLikedTracks.length > 0) {
+      const sliced = allLikedTracks.slice(startIndex, startIndex + 50);
+      const uris = sliced.map((t) => t.uri);
+      await this.playTracks(hass, entityId, uris, deviceId);
+    } else {
+      await this.playAllLiked(hass, entityId, deviceId);
     }
   }
 
