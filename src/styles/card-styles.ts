@@ -772,4 +772,196 @@ export const cardStyles = css`
     color: var(--bsc-text-muted);
     font-variant-numeric: tabular-nums;
   }
+
+  /* Shuffle toggle button in player controls */
+  .btn-shuffle-toggle {
+    background: transparent;
+    border: none;
+    color: var(--bsc-text-secondary);
+    cursor: pointer;
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: color 0.15s ease, background 0.15s ease, transform 0.1s ease;
+    padding: 0;
+  }
+
+  .btn-shuffle-toggle:hover {
+    color: var(--bsc-text);
+    background: rgba(255, 255, 255, 0.1);
+  }
+
+  .btn-shuffle-toggle.active {
+    color: var(--bsc-primary);
+    background: rgba(29, 185, 84, 0.16);
+  }
+
+  .btn-shuffle-toggle svg {
+    width: 20px;
+    height: 20px;
+    fill: currentColor;
+  }
+
+  /* Action bar at the top of playlists and liked tabs */
+  .tab-action-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    margin-bottom: 12px;
+    flex-wrap: wrap;
+  }
+
+  .tab-action-title {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--bsc-text-secondary);
+  }
+
+  .tab-action-buttons {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-left: auto;
+  }
+
+  .btn-pill-play {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--bsc-primary);
+    color: #000;
+    border: none;
+    border-radius: 20px;
+    padding: 6px 14px;
+    font-size: 12.5px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: transform 0.15s ease, background 0.15s ease;
+  }
+
+  .btn-pill-play:hover {
+    background: var(--bsc-primary-hover);
+    transform: scale(1.03);
+  }
+
+  .btn-pill-play:active {
+    transform: scale(0.97);
+  }
+
+  .btn-pill-play svg {
+    width: 16px;
+    height: 16px;
+    fill: currentColor;
+  }
+
+  .btn-pill-shuffle {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(255, 255, 255, 0.1);
+    color: var(--bsc-text);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 20px;
+    padding: 6px 12px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.15s ease, transform 0.15s ease;
+  }
+
+  .btn-pill-shuffle:hover {
+    background: rgba(255, 255, 255, 0.18);
+    transform: scale(1.03);
+  }
+
+  .btn-pill-shuffle:active {
+    transform: scale(0.97);
+  }
+
+  .btn-pill-shuffle svg {
+    width: 15px;
+    height: 15px;
+    fill: currentColor;
+  }
+
+  /* Back button in playlist view */
+  .btn-back {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: transparent;
+    border: none;
+    color: var(--bsc-text-secondary);
+    font-size: 12.5px;
+    font-weight: 600;
+    cursor: pointer;
+    padding: 2px 0 10px 0;
+    transition: color 0.15s ease;
+  }
+
+  .btn-back:hover {
+    color: var(--bsc-text);
+  }
+
+  .btn-back svg {
+    width: 18px;
+    height: 18px;
+    fill: currentColor;
+  }
+
+  /* Playlist detail view header */
+  .playlist-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 12px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--bsc-border);
+  }
+
+  .playlist-header-cover {
+    width: 58px;
+    height: 58px;
+    min-width: 58px;
+    border-radius: 8px;
+    background: #282828;
+    object-fit: cover;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+  }
+
+  .playlist-header-meta {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .playlist-header-title {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--bsc-text);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .playlist-header-sub {
+    font-size: 12px;
+    color: var(--bsc-text-secondary);
+    margin-top: 2px;
+  }
+
+  .list-item-arrow {
+    color: var(--bsc-text-muted);
+    display: flex;
+    align-items: center;
+  }
+
+  .list-item-arrow svg {
+    width: 18px;
+    height: 18px;
+    fill: currentColor;
+  }
 `;

@@ -21,6 +21,10 @@ export class BetterSpotifyCard extends LitElement {
   @state() private searchResults: SpotifyTrack[] = [];
   @state() private devices: SpotifyConnectDevice[] = [];
 
+  @state() private selectedPlaylist: SpotifyPlaylist | null = null;
+  @state() private playlistTracks: SpotifyTrack[] = [];
+  @state() private loadingPlaylistTracks = false;
+
   @state() private loadingPlaylists = false;
   @state() private loadingLiked = false;
   @state() private loadingSearch = false;
@@ -137,6 +141,9 @@ export class BetterSpotifyCard extends LitElement {
   }
 
   private setTab(tab: 'playlists' | 'liked' | 'search' | 'devices'): void {
+    if (this.activeTab !== tab) {
+      this.selectedPlaylist = null;
+    }
     this.activeTab = tab;
     this.loadCurrentTabData();
   }
@@ -275,8 +282,53 @@ export class BetterSpotifyCard extends LitElement {
     await this.fetchDevices();
   }
 
-  private async handlePlayPlaylist(playlist: SpotifyPlaylist): Promise<void> {
+  private async handleSelectPlaylist(playlist: SpotifyPlaylist): Promise<void> {
+    this.selectedPlaylist = playlist;
+    this.playlistTracks = [];
+    this.loadingPlaylistTracks = true;
+    try {
+      this.playlistTracks = await SpotifyService.getPlaylistTracks(
+        this.hass,
+        this.config.entity,
+        playlist.id || playlist.uri
+      );
+    } catch (err) {
+      console.error(err);
+    } finally {
+      this.loadingPlaylistTracks = false;
+    }
+  }
+
+  private handleBackToPlaylists(): void {
+    this.selectedPlaylist = null;
+    this.playlistTracks = [];
+  }
+
+  private async handlePlayAllLiked(shuffle = false): Promise<void> {
+    if (shuffle) {
+      await SpotifyService.setShuffle(this.hass, this.config.entity, true);
+    }
+    await SpotifyService.playLikedTracks(this.hass, this.config.entity, this.likedTracks, 0);
+  }
+
+  private async handlePlayAllPlaylist(playlist: SpotifyPlaylist, shuffle = false): Promise<void> {
+    if (shuffle) {
+      await SpotifyService.setShuffle(this.hass, this.config.entity, true);
+    }
     await SpotifyService.playContext(this.hass, this.config.entity, playlist.uri, 0);
+  }
+
+  private async handlePlayPlaylistTrack(playlist: SpotifyPlaylist, index: number): Promise<void> {
+    await SpotifyService.playContext(this.hass, this.config.entity, playlist.uri, index);
+  }
+
+  private async handleToggleShuffle(e?: Event): Promise<void> {
+    e?.stopPropagation();
+    await SpotifyService.toggleShuffle(this.hass, this.config.entity);
+  }
+
+  private async handlePlayPlaylist(playlist: SpotifyPlaylist): Promise<void> {
+    await this.handleSelectPlaylist(playlist);
   }
 
   private async handlePlayLikedTrack(index: number): Promise<void> {
@@ -479,8 +531,16 @@ export class BetterSpotifyCard extends LitElement {
           </div>
         </div>
 
-        <!-- Controls: Vol -, Prev, Play/Pause, Next, Vol + -->
+        <!-- Controls: Shuffle, Vol -, Prev, Play/Pause, Next, Vol + -->
         <div class="player-actions-row">
+          <button
+            class="btn-shuffle-toggle ${entity.attributes.shuffle ? 'active' : ''}"
+            title=${entity.attributes.shuffle ? 'Mode aléatoire : activé (cliquer pour normal)' : 'Mode aléatoire : désactivé (cliquer pour aléatoire)'}
+            @click=${(e: Event) => this.handleToggleShuffle(e)}
+          >
+            ${icons.shuffle}
+          </button>
+
           <button
             class="btn-vol"
             title="Baisser le volume (-5%)"
@@ -561,6 +621,28 @@ export class BetterSpotifyCard extends LitElement {
     const currentTrackTitle = entity.attributes.media_title;
 
     return html`
+      <div class="tab-action-bar">
+        <div class="tab-action-title">${this.likedTracks.length} titres</div>
+        <div class="tab-action-buttons">
+          <button
+            class="btn-pill-play"
+            title="Tout écouter"
+            @click=${() => this.handlePlayAllLiked(false)}
+          >
+            ${icons.play}
+            <span>Tout écouter</span>
+          </button>
+          <button
+            class="btn-pill-shuffle"
+            title="Lecture aléatoire"
+            @click=${() => this.handlePlayAllLiked(true)}
+          >
+            ${icons.shuffle}
+            <span>Aléatoire</span>
+          </button>
+        </div>
+      </div>
+
       <div class="items-list">
         ${this.likedTracks.map((track, index) => {
           const isCurrent = currentTrackTitle && track.name === currentTrackTitle;
@@ -596,6 +678,93 @@ export class BetterSpotifyCard extends LitElement {
    * Tab 2: Playlists
    */
   private renderPlaylistsTab(entity: any): TemplateResult {
+    // If a playlist is selected, show its tracks view!
+    if (this.selectedPlaylist) {
+      const pl = this.selectedPlaylist;
+      const cover = pl.images?.[0]?.url;
+      const currentTrackTitle = entity.attributes.media_title;
+
+      return html`
+        <button class="btn-back" @click=${() => this.handleBackToPlaylists()}>
+          ${icons.arrowBack}
+          <span>Toutes les playlists</span>
+        </button>
+
+        <div class="playlist-header">
+          ${cover
+            ? html`<img class="playlist-header-cover" src=${cover} alt="Cover" />`
+            : html`<div class="playlist-header-cover list-item-thumb">${icons.playlist}</div>`}
+          <div class="playlist-header-meta">
+            <div class="playlist-header-title">${pl.name}</div>
+            <div class="playlist-header-sub">
+              ${pl.tracks_total ? `${pl.tracks_total} titres` : ''}
+              ${pl.owner_name ? `• Par ${pl.owner_name}` : ''}
+            </div>
+          </div>
+        </div>
+
+        <div class="tab-action-bar">
+          <div class="tab-action-title">${this.playlistTracks.length} titres</div>
+          <div class="tab-action-buttons">
+            <button
+              class="btn-pill-play"
+              title="Tout écouter"
+              @click=${() => this.handlePlayAllPlaylist(pl, false)}
+            >
+              ${icons.play}
+              <span>Tout écouter</span>
+            </button>
+            <button
+              class="btn-pill-shuffle"
+              title="Lecture aléatoire"
+              @click=${() => this.handlePlayAllPlaylist(pl, true)}
+            >
+              ${icons.shuffle}
+              <span>Aléatoire</span>
+            </button>
+          </div>
+        </div>
+
+        ${this.loadingPlaylistTracks
+          ? html`
+              <div class="state-message">
+                <div class="spinner"></div>
+                <div>Chargement des morceaux...</div>
+              </div>
+            `
+          : html`
+              <div class="items-list">
+                ${this.playlistTracks.map((track, index) => {
+                  const isCurrent = currentTrackTitle && track.name === currentTrackTitle;
+                  const trackCover = track.album?.images?.[0]?.url || cover;
+                  const artistNames = track.artists.map((a) => a.name).join(', ');
+
+                  return html`
+                    <div
+                      class="list-item"
+                      @click=${() => this.handlePlayPlaylistTrack(pl, index)}
+                      title="Lancer à partir de ce morceau"
+                    >
+                      ${trackCover
+                        ? html`<img class="list-item-thumb" src=${trackCover} alt="Cover" />`
+                        : html`<div class="list-item-thumb">${icons.musicNote}</div>`}
+
+                      <div class="list-item-text">
+                        <div class="list-item-title ${isCurrent ? 'active' : ''}">
+                          ${track.name}
+                        </div>
+                        <div class="list-item-subtitle">${artistNames}</div>
+                      </div>
+
+                      <div class="list-item-duration">${formatDuration(track.duration_ms)}</div>
+                    </div>
+                  `;
+                })}
+              </div>
+            `}
+      `;
+    }
+
     if (this.loadingPlaylists) {
       return html`
         <div class="state-message">
@@ -624,8 +793,8 @@ export class BetterSpotifyCard extends LitElement {
           return html`
             <div
               class="list-item"
-              @click=${() => this.handlePlayPlaylist(pl)}
-              title="Lire la playlist ${pl.name}"
+              @click=${() => this.handleSelectPlaylist(pl)}
+              title="Afficher les titres de la playlist ${pl.name}"
             >
               ${cover
                 ? html`<img class="list-item-thumb" src=${cover} alt="Cover" />`
@@ -634,6 +803,10 @@ export class BetterSpotifyCard extends LitElement {
               <div class="list-item-text">
                 <div class="list-item-title">${pl.name}</div>
                 <div class="list-item-subtitle">${subtitle}</div>
+              </div>
+
+              <div class="list-item-arrow">
+                ${icons.chevronRight}
               </div>
             </div>
           `;
@@ -793,7 +966,7 @@ if (!customElements.get('better-spotify-card')) {
 });
 
 console.info(
-  '%c BETTER-SPOTIFY-CARD %c v1.0.0 ',
+  '%c BETTER-SPOTIFY-CARD %c v1.2.0 ',
   'color: white; background: #1DB954; font-weight: 700; border-radius: 3px 0 0 3px;',
   'color: white; background: #282828; font-weight: 700; border-radius: 0 3px 3px 0;'
 );

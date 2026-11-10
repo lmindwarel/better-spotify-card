@@ -128,6 +128,52 @@ export class SpotifyService {
   }
 
   /**
+   * Get items (tracks) for a specific playlist
+   */
+  public static async getPlaylistTracks(
+    hass: HomeAssistant,
+    entityId: string,
+    playlistIdOrUri: string,
+    limit = 100
+  ): Promise<SpotifyTrack[]> {
+    try {
+      const playlistId = playlistIdOrUri.replace('spotify:playlist:', '');
+      const res = await this.callSpotifyPlusWS(hass, 'get_playlist_items', entityId, {
+        playlist_id: playlistId,
+        limit: Math.min(limit, 50),
+        limit_total: limit,
+      });
+
+      const items = res?.result?.items || [];
+      return items
+        .map((item: any) => {
+          const t = item.track || item;
+          if (!t || !t.name) return null;
+          return {
+            id: t.id || t.uri,
+            name: t.name || 'Titre inconnu',
+            uri: t.uri,
+            duration_ms: t.duration_ms || 0,
+            artists: (t.artists || []).map((a: any) => ({ id: a.id, name: a.name, uri: a.uri })),
+            album: t.album
+              ? {
+                  id: t.album.id,
+                  name: t.album.name,
+                  uri: t.album.uri,
+                  images: t.album.images || [],
+                }
+              : undefined,
+            is_playable: t.is_playable ?? true,
+          } as SpotifyTrack;
+        })
+        .filter((t: any): t is SpotifyTrack => t !== null);
+    } catch (err) {
+      console.error('[BetterSpotifyCard] Erreur getPlaylistTracks:', err);
+      return [];
+    }
+  }
+
+  /**
    * Get user track favorites (Liked Songs)
    */
   public static async getLikedTracks(
@@ -314,5 +360,34 @@ export class SpotifyService {
       entity_id: entityId,
       seek_position: positionSeconds,
     });
+  }
+
+  /**
+   * Set shuffle mode
+   */
+  public static async setShuffle(
+    hass: HomeAssistant,
+    entityId: string,
+    shuffle: boolean
+  ): Promise<void> {
+    try {
+      await this.callSpotifyPlusWS(hass, 'player_set_shuffle_mode', entityId, {
+        state: shuffle,
+      });
+    } catch (e) {
+      await hass.callService('media_player', 'shuffle_set', {
+        entity_id: entityId,
+        shuffle,
+      });
+    }
+  }
+
+  /**
+   * Toggle shuffle mode
+   */
+  public static async toggleShuffle(hass: HomeAssistant, entityId: string): Promise<void> {
+    const entity = hass.states[entityId];
+    const currentShuffle = Boolean(entity?.attributes?.shuffle);
+    await this.setShuffle(hass, entityId, !currentShuffle);
   }
 }
