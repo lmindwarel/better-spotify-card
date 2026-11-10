@@ -90,12 +90,12 @@ export class BetterSpotifyCard extends LitElement {
     if (this.hass && this.config?.entity) {
       SpotifyService.refreshPlaybackState(this.hass, this.config.entity);
     }
-    // Periodic refresh every 8 seconds
+    // Periodic refresh every 20 seconds
     this.refreshStateInterval = window.setInterval(() => {
       if (this.hass && this.config?.entity) {
         SpotifyService.refreshPlaybackState(this.hass, this.config.entity);
       }
-    }, 8000);
+    }, 20000);
   }
 
   private stopPlaybackRefresh(): void {
@@ -197,7 +197,7 @@ export class BetterSpotifyCard extends LitElement {
     if (this.loadingLiked) return;
     this.loadingLiked = true;
     try {
-      this.likedTracks = await SpotifyService.getLikedTracks(this.hass, this.config.entity, 50);
+      this.likedTracks = await SpotifyService.getLikedTracks(this.hass, this.config.entity, 500);
     } catch (e) {
       console.error(e);
     } finally {
@@ -209,7 +209,7 @@ export class BetterSpotifyCard extends LitElement {
     if (this.loadingPlaylists) return;
     this.loadingPlaylists = true;
     try {
-      this.playlists = await SpotifyService.getPlaylists(this.hass, this.config.entity, 50);
+      this.playlists = await SpotifyService.getPlaylists(this.hass, this.config.entity, 200);
     } catch (e) {
       console.error(e);
     } finally {
@@ -317,7 +317,8 @@ export class BetterSpotifyCard extends LitElement {
       this.playlistTracks = await SpotifyService.getPlaylistTracks(
         this.hass,
         this.config.entity,
-        playlist.id || playlist.uri
+        playlist.id || playlist.uri,
+        500
       );
     } catch (err) {
       console.error(err);
@@ -660,14 +661,6 @@ export class BetterSpotifyCard extends LitElement {
             ${icons.play}
             <span>Tout écouter</span>
           </button>
-          <button
-            class="btn-pill-shuffle"
-            title="Lecture aléatoire"
-            @click=${() => this.handlePlayAllLiked(true)}
-          >
-            ${icons.shuffle}
-            <span>Aléatoire</span>
-          </button>
         </div>
       </div>
 
@@ -742,14 +735,6 @@ export class BetterSpotifyCard extends LitElement {
               ${icons.play}
               <span>Tout écouter</span>
             </button>
-            <button
-              class="btn-pill-shuffle"
-              title="Lecture aléatoire"
-              @click=${() => this.handlePlayAllPlaylist(pl, true)}
-            >
-              ${icons.shuffle}
-              <span>Aléatoire</span>
-            </button>
           </div>
         </div>
 
@@ -760,7 +745,16 @@ export class BetterSpotifyCard extends LitElement {
                 <div>Chargement des morceaux...</div>
               </div>
             `
-          : html`
+          : this.playlistTracks.length === 0
+            ? html`
+                <div class="state-message">
+                  <div>Aucun morceau visible dans la liste.</div>
+                  <div style="font-size: 12px; color: var(--sp-text-subdued); margin-top: 6px;">
+                    Vous pouvez tout de même écouter la playlist avec le bouton « Tout écouter ».
+                  </div>
+                </div>
+              `
+            : html`
               <div class="items-list">
                 ${this.playlistTracks.map((track, index) => {
                   const isCurrent = currentTrackTitle && track.name === currentTrackTitle;
@@ -994,7 +988,7 @@ if (!customElements.get('better-spotify-card')) {
 });
 
 console.info(
-  '%c BETTER-SPOTIFY-CARD %c v1.3.0 ',
+  '%c BETTER-SPOTIFY-CARD %c v1.4.0 ',
   'color: white; background: #1DB954; font-weight: 700; border-radius: 3px 0 0 3px;',
   'color: white; background: #282828; font-weight: 700; border-radius: 0 3px 3px 0;'
 );

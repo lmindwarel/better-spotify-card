@@ -25,7 +25,7 @@ export class SpotifyService {
   }
 
   /**
-   * Helper to call a SpotifyPlus service with response data via Home Assistant WebSocket
+   * Helper to call a SpotifyPlus query service with response data via Home Assistant WebSocket
    */
   private static async callSpotifyPlusWS(
     hass: HomeAssistant,
@@ -104,7 +104,8 @@ export class SpotifyService {
     deviceId: string
   ): Promise<void> {
     try {
-      await this.callSpotifyPlusWS(hass, 'player_transfer_playback', entityId, {
+      await hass.callService('spotifyplus', 'player_transfer_playback', {
+        entity_id: entityId,
         device_id: deviceId,
         play: true,
       });
@@ -124,11 +125,11 @@ export class SpotifyService {
   public static async getPlaylists(
     hass: HomeAssistant,
     entityId: string,
-    limit = 50
+    limit = 200
   ): Promise<SpotifyPlaylist[]> {
     try {
       const res = await this.callSpotifyPlusWS(hass, 'get_playlist_favorites', entityId, {
-        limit: Math.min(limit, 50),
+        limit: 50,
         limit_total: limit,
         sort_result: true,
       });
@@ -156,32 +157,36 @@ export class SpotifyService {
     hass: HomeAssistant,
     entityId: string,
     playlistIdOrUri: string,
-    limit = 100
+    limit = 500
   ): Promise<SpotifyTrack[]> {
     try {
-      const playlistId = playlistIdOrUri.replace('spotify:playlist:', '');
+      const playlistId = playlistIdOrUri.replace('spotify:playlist:', '').trim();
       const res = await this.callSpotifyPlusWS(hass, 'get_playlist_items', entityId, {
         playlist_id: playlistId,
-        limit: Math.min(limit, 50),
+        limit: 50,
         limit_total: limit,
       });
 
       const items = res?.result?.items || [];
       return items
         .map((item: any) => {
-          const t = item.track || item;
+          const t = item.track || item.item || item;
           if (!t || !t.name) return null;
           return {
             id: t.id || t.uri,
             name: t.name || 'Titre inconnu',
             uri: t.uri,
             duration_ms: t.duration_ms || 0,
-            artists: (t.artists || []).map((a: any) => ({ id: a.id, name: a.name, uri: a.uri })),
+            artists: (t.artists || []).map((a: any) => ({
+              id: a.id || '',
+              name: typeof a === 'string' ? a : (a.name || 'Artiste inconnu'),
+              uri: a.uri || '',
+            })),
             album: t.album
               ? {
-                  id: t.album.id,
-                  name: t.album.name,
-                  uri: t.album.uri,
+                  id: t.album.id || '',
+                  name: t.album.name || '',
+                  uri: t.album.uri || '',
                   images: t.album.images || [],
                 }
               : undefined,
@@ -201,29 +206,33 @@ export class SpotifyService {
   public static async getLikedTracks(
     hass: HomeAssistant,
     entityId: string,
-    limit = 50
+    limit = 500
   ): Promise<SpotifyTrack[]> {
     try {
       const res = await this.callSpotifyPlusWS(hass, 'get_track_favorites', entityId, {
-        limit: Math.min(limit, 50),
+        limit: 50,
         limit_total: limit,
         sort_result: false,
       });
 
       const items = res?.result?.items || [];
       return items.map((item: any) => {
-        const t = item.track || item;
+        const t = item.track || item.item || item;
         return {
           id: t.id || t.uri,
           name: t.name || 'Titre inconnu',
           uri: t.uri,
           duration_ms: t.duration_ms || 0,
-          artists: (t.artists || []).map((a: any) => ({ id: a.id, name: a.name, uri: a.uri })),
+          artists: (t.artists || []).map((a: any) => ({
+            id: a.id || '',
+            name: typeof a === 'string' ? a : (a.name || 'Artiste inconnu'),
+            uri: a.uri || '',
+          })),
           album: t.album
             ? {
-                id: t.album.id,
-                name: t.album.name,
-                uri: t.album.uri,
+                id: t.album.id || '',
+                name: t.album.name || '',
+                uri: t.album.uri || '',
                 images: t.album.images || [],
               }
             : undefined,
@@ -262,11 +271,11 @@ export class SpotifyService {
         artists: (t.artists || []).map((a: any) => ({ id: a.id, name: a.name, uri: a.uri })),
         album: t.album
           ? {
-                id: t.album.id,
-                name: t.album.name,
-                uri: t.album.uri,
-                images: t.album.images || [],
-              }
+              id: t.album.id,
+              name: t.album.name,
+              uri: t.album.uri,
+              images: t.album.images || [],
+            }
           : undefined,
         is_playable: t.is_playable ?? true,
       }));
@@ -286,7 +295,8 @@ export class SpotifyService {
     offsetPosition = 0
   ): Promise<void> {
     try {
-      await this.callSpotifyPlusWS(hass, 'player_media_play_context', entityId, {
+      await hass.callService('spotifyplus', 'player_media_play_context', {
+        entity_id: entityId,
         context_uri: contextUri,
         offset_position: offsetPosition,
       });
@@ -312,7 +322,8 @@ export class SpotifyService {
     try {
       // spotifyplus accepts up to 50 items comma-separated
       const uriList = uris.slice(0, 50).join(',');
-      await this.callSpotifyPlusWS(hass, 'player_media_play_tracks', entityId, {
+      await hass.callService('spotifyplus', 'player_media_play_tracks', {
+        entity_id: entityId,
         uris: uriList,
         position_ms: 0,
       });
@@ -335,13 +346,27 @@ export class SpotifyService {
     allLikedTracks: SpotifyTrack[],
     startIndex = 0
   ): Promise<void> {
+    // If playing from beginning, use native player_media_play_track_favorites to play all favorites
+    if (startIndex === 0) {
+      try {
+        await hass.callService('spotifyplus', 'player_media_play_track_favorites', {
+          entity_id: entityId,
+          limit_total: 500,
+        });
+        return;
+      } catch (err) {
+        console.warn('[BetterSpotifyCard] player_media_play_track_favorites failed, falling back:', err);
+      }
+    }
+
     if (allLikedTracks && allLikedTracks.length > 0) {
       const sliced = allLikedTracks.slice(startIndex, startIndex + 50);
       const uris = sliced.map((t) => t.uri);
       await this.playTracks(hass, entityId, uris);
     } else {
-      await this.callSpotifyPlusWS(hass, 'player_media_play_track_favorites', entityId, {
-        shuffle: false,
+      await hass.callService('spotifyplus', 'player_media_play_track_favorites', {
+        entity_id: entityId,
+        limit_total: 500,
       });
     }
   }
@@ -354,11 +379,19 @@ export class SpotifyService {
   }
 
   public static async skipNext(hass: HomeAssistant, entityId: string): Promise<void> {
-    await hass.callService('media_player', 'media_next_track', { entity_id: entityId });
+    try {
+      await hass.callService('spotifyplus', 'player_media_skip_next', { entity_id: entityId });
+    } catch (e) {
+      await hass.callService('media_player', 'media_next_track', { entity_id: entityId });
+    }
   }
 
   public static async skipPrevious(hass: HomeAssistant, entityId: string): Promise<void> {
-    await hass.callService('media_player', 'media_previous_track', { entity_id: entityId });
+    try {
+      await hass.callService('spotifyplus', 'player_media_skip_previous', { entity_id: entityId });
+    } catch (e) {
+      await hass.callService('media_player', 'media_previous_track', { entity_id: entityId });
+    }
   }
 
   public static async setVolume(
@@ -393,7 +426,8 @@ export class SpotifyService {
     shuffle: boolean
   ): Promise<void> {
     try {
-      await this.callSpotifyPlusWS(hass, 'player_set_shuffle_mode', entityId, {
+      await hass.callService('spotifyplus', 'player_set_shuffle_mode', {
+        entity_id: entityId,
         state: shuffle,
       });
     } catch (e) {
