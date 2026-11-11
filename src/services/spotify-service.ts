@@ -10,12 +10,12 @@ export class SpotifyService {
     entityId: string
   ): Promise<void> {
     try {
-      await hass.callService('spotifyplus', 'trigger_scan_interval', {
+      await hass.callService('homeassistant', 'update_entity', {
         entity_id: entityId,
       });
     } catch (e) {
       try {
-        await hass.callService('homeassistant', 'update_entity', {
+        await hass.callService('spotifyplus', 'trigger_scan_interval', {
           entity_id: entityId,
         });
       } catch (err) {

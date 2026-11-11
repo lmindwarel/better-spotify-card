@@ -606,12 +606,12 @@ class SpotifyService {
    */
   static async refreshPlaybackState(hass, entityId) {
     try {
-      await hass.callService("spotifyplus", "trigger_scan_interval", {
+      await hass.callService("homeassistant", "update_entity", {
         entity_id: entityId
       });
     } catch (e2) {
       try {
-        await hass.callService("homeassistant", "update_entity", {
+        await hass.callService("spotifyplus", "trigger_scan_interval", {
           entity_id: entityId
         });
       } catch (err) {
@@ -2605,7 +2605,6 @@ const _BetterSpotifyCard = class _BetterSpotifyCard extends i {
     };
     window.addEventListener("keydown", this.boundKeydownHandler);
     this.startPositionTicker();
-    this.startPlaybackRefresh();
   }
   disconnectedCallback() {
     super.disconnectedCallback();
@@ -2628,10 +2627,10 @@ const _BetterSpotifyCard = class _BetterSpotifyCard extends i {
     }
     this.refreshStateInterval = window.setInterval(() => {
       var _a3;
-      if (this.hass && ((_a3 = this.config) == null ? void 0 : _a3.entity) && this.hass.states[this.config.entity]) {
+      if (this.popupOpen && this.hass && ((_a3 = this.config) == null ? void 0 : _a3.entity) && this.hass.states[this.config.entity]) {
         SpotifyService.refreshPlaybackState(this.hass, this.config.entity);
       }
-    }, 15e3);
+    }, 3e4);
   }
   stopPlaybackRefresh() {
     if (this.refreshStateInterval) {
@@ -2640,12 +2639,7 @@ const _BetterSpotifyCard = class _BetterSpotifyCard extends i {
     }
   }
   updated(changedProps) {
-    var _a2;
     super.updated(changedProps);
-    if (changedProps.has("hass") && this.hass && ((_a2 = this.config) == null ? void 0 : _a2.entity) && !this.initialRefreshDone) {
-      this.initialRefreshDone = true;
-      this.startPlaybackRefresh();
-    }
     if (changedProps.has("popupOpen") || changedProps.has("activeTab")) {
       if (this.popupOpen) {
         this.loadCurrentTabData();
@@ -2684,19 +2678,17 @@ const _BetterSpotifyCard = class _BetterSpotifyCard extends i {
     }
   }
   openPopup(initialTab) {
-    var _a2;
     if (initialTab) {
       this.activeTab = initialTab;
     }
     this.popupOpen = true;
     this.loadCurrentTabData();
     this.fetchDevices();
-    if (this.hass && ((_a2 = this.config) == null ? void 0 : _a2.entity)) {
-      SpotifyService.refreshPlaybackState(this.hass, this.config.entity);
-    }
+    this.startPlaybackRefresh();
   }
   closePopup() {
     this.closeVolumeMenu();
+    this.stopPlaybackRefresh();
     this.popupOpen = false;
   }
   setTab(tab) {
@@ -3797,7 +3789,7 @@ if (!cardAlreadyRegistered) {
   });
 }
 console.info(
-  "%c BETTER-SPOTIFY-CARD %c v1.8.1 ",
+  "%c BETTER-SPOTIFY-CARD %c v1.8.2 ",
   "color: white; background: #1DB954; font-weight: 700; border-radius: 3px 0 0 3px;",
   "color: white; background: #282828; font-weight: 700; border-radius: 0 3px 3px 0;"
 );

@@ -126,7 +126,6 @@ export class BetterSpotifyCard extends LitElement {
     };
     window.addEventListener('keydown', this.boundKeydownHandler);
     this.startPositionTicker();
-    this.startPlaybackRefresh();
   }
 
   public disconnectedCallback(): void {
@@ -145,16 +144,16 @@ export class BetterSpotifyCard extends LitElement {
 
   private startPlaybackRefresh(): void {
     this.stopPlaybackRefresh();
-    // Immediate refresh on startup only if entity is known in states
+    // Immediate gentle refresh when popup opens
     if (this.hass && this.config?.entity && this.hass.states[this.config.entity]) {
       SpotifyService.refreshPlaybackState(this.hass, this.config.entity);
     }
-    // Periodic refresh every 15 seconds
+    // Gentle periodic refresh only while popup is actively open (every 30 seconds)
     this.refreshStateInterval = window.setInterval(() => {
-      if (this.hass && this.config?.entity && this.hass.states[this.config.entity]) {
+      if (this.popupOpen && this.hass && this.config?.entity && this.hass.states[this.config.entity]) {
         SpotifyService.refreshPlaybackState(this.hass, this.config.entity);
       }
-    }, 15000);
+    }, 30000);
   }
 
   private stopPlaybackRefresh(): void {
@@ -166,12 +165,6 @@ export class BetterSpotifyCard extends LitElement {
 
   protected updated(changedProps: PropertyValues): void {
     super.updated(changedProps);
-
-    // Initial state refresh as soon as hass is supplied
-    if (changedProps.has('hass') && this.hass && this.config?.entity && !this.initialRefreshDone) {
-      this.initialRefreshDone = true;
-      this.startPlaybackRefresh();
-    }
 
     // If popup opens or active tab changes, fetch required tab data
     if (changedProps.has('popupOpen') || changedProps.has('activeTab')) {
@@ -221,15 +214,13 @@ export class BetterSpotifyCard extends LitElement {
     }
     this.popupOpen = true;
     this.loadCurrentTabData();
-    // Also refresh devices list and playback state
     this.fetchDevices();
-    if (this.hass && this.config?.entity) {
-      SpotifyService.refreshPlaybackState(this.hass, this.config.entity);
-    }
+    this.startPlaybackRefresh();
   }
 
   private closePopup(): void {
     this.closeVolumeMenu();
+    this.stopPlaybackRefresh();
     this.popupOpen = false;
   }
 
@@ -1366,7 +1357,7 @@ if (!cardAlreadyRegistered) {
 }
 
 console.info(
-  '%c BETTER-SPOTIFY-CARD %c v1.8.1 ',
+  '%c BETTER-SPOTIFY-CARD %c v1.8.2 ',
   'color: white; background: #1DB954; font-weight: 700; border-radius: 3px 0 0 3px;',
   'color: white; background: #282828; font-weight: 700; border-radius: 0 3px 3px 0;'
 );
