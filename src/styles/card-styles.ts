@@ -758,46 +758,186 @@ export const cardStyles = css`
     fill: #000;
   }
 
-  /* Col Right: Mode Lecture, Vol -, Vol + */
+  /* Col Right: Mode Lecture, Vol Trigger */
   .desktop-col-right {
     display: flex;
     align-items: center;
     justify-content: flex-end;
-    gap: 6px;
+    gap: 8px;
     flex: 1;
     min-width: 0;
   }
 
-  .btn-vol {
+  .btn-vol-trigger {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: 2px;
+    gap: 5px;
     background: rgba(255, 255, 255, 0.08);
-    border: 1px solid rgba(255, 255, 255, 0.06);
-    color: var(--bsc-text-secondary);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    color: var(--bsc-text);
     cursor: pointer;
     height: 32px;
-    min-width: 36px;
-    padding: 0 8px;
+    padding: 0 10px;
     border-radius: 16px;
-    font-size: 11.5px;
+    font-size: 12px;
     font-weight: 600;
-    transition: background 0.15s ease, color 0.15s ease, transform 0.1s ease;
+    transition: all 0.15s ease;
+    user-select: none;
+    font-variant-numeric: tabular-nums;
   }
 
-  .btn-vol:hover {
+  .btn-vol-trigger:hover {
     background: rgba(255, 255, 255, 0.16);
-    color: var(--bsc-text);
+    color: #ffffff;
+    border-color: rgba(255, 255, 255, 0.2);
   }
 
-  .btn-vol:active {
+  .btn-vol-trigger.active {
+    background: var(--bsc-primary, #1db954);
+    color: #000000;
+    border-color: transparent;
+  }
+
+  .btn-vol-trigger svg {
+    width: 16px;
+    height: 16px;
+    fill: currentColor;
+  }
+
+  /* Dedicated Volume Popover / Bar */
+  .volume-popover {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 14px;
+    background: #202020;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 12px;
+    box-shadow: 0 6px 24px rgba(0, 0, 0, 0.5);
+    width: 100%;
+    box-sizing: border-box;
+    animation: fadeIn 0.15s ease-out;
+  }
+
+  .btn-vol-step {
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    color: var(--bsc-text);
+    cursor: pointer;
+    width: 32px;
+    height: 32px;
+    min-width: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 17px;
+    font-weight: 700;
+    line-height: 1;
+    transition: all 0.12s ease;
+    padding: 0;
+    user-select: none;
+  }
+
+  .btn-vol-step:hover {
+    background: rgba(255, 255, 255, 0.2);
+    transform: scale(1.08);
+    color: #ffffff;
+  }
+
+  .btn-vol-step:active {
     transform: scale(0.92);
   }
 
-  .btn-vol svg {
-    width: 15px;
-    height: 15px;
+  .volume-slider-wrapper {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    min-width: 0;
+    padding: 0 4px;
+  }
+
+  .volume-slider {
+    flex: 1;
+    -webkit-appearance: none;
+    appearance: none;
+    height: 6px;
+    border-radius: 3px;
+    background: linear-gradient(
+      to right,
+      var(--bsc-primary) 0%,
+      var(--bsc-primary) var(--volume-percent, 50%),
+      rgba(255, 255, 255, 0.2) var(--volume-percent, 50%),
+      rgba(255, 255, 255, 0.2) 100%
+    );
+    outline: none;
+    cursor: pointer;
+    transition: height 0.15s ease;
+  }
+
+  .volume-slider:hover,
+  .volume-slider:active {
+    height: 8px;
+  }
+
+  .volume-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: #ffffff;
+    cursor: pointer;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+    transition: transform 0.1s ease;
+  }
+
+  .volume-slider:hover::-webkit-slider-thumb,
+  .volume-slider:active::-webkit-slider-thumb {
+    transform: scale(1.2);
+  }
+
+  .volume-slider::-moz-range-progress {
+    background-color: var(--bsc-primary);
+    height: 6px;
+    border-radius: 3px;
+  }
+
+  .volume-percent-label {
+    min-width: 38px;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--bsc-primary, #1db954);
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+    user-select: none;
+  }
+
+  .btn-vol-close {
+    background: transparent;
+    border: none;
+    color: var(--bsc-text-muted);
+    cursor: pointer;
+    width: 28px;
+    height: 28px;
+    min-width: 28px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    transition: all 0.12s ease;
+  }
+
+  .btn-vol-close:hover {
+    color: #ffffff;
+    background: rgba(255, 255, 255, 0.1);
+  }
+
+  .btn-vol-close svg {
+    width: 16px;
+    height: 16px;
     fill: currentColor;
   }
 

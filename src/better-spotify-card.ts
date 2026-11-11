@@ -39,10 +39,13 @@ export class BetterSpotifyCard extends LitElement {
 
   @state() private searchQuery = '';
   @state() private currentPosition = 0;
+  @state() private volumeMenuOpen = false;
+  @state() private localVolume: number | null = null;
 
   private searchDebounceTimer?: number;
   private positionTickerInterval?: number;
   private refreshStateInterval?: number;
+  private volumeDebounceTimer?: number;
   private boundKeydownHandler?: (e: KeyboardEvent) => void;
   private initialRefreshDone = false;
 
@@ -74,8 +77,12 @@ export class BetterSpotifyCard extends LitElement {
   public connectedCallback(): void {
     super.connectedCallback();
     this.boundKeydownHandler = (e: KeyboardEvent) => {
-      if (e.key === 'Escape' && this.popupOpen) {
-        this.closePopup();
+      if (e.key === 'Escape') {
+        if (this.volumeMenuOpen) {
+          this.volumeMenuOpen = false;
+        } else if (this.popupOpen) {
+          this.closePopup();
+        }
       }
     };
     window.addEventListener('keydown', this.boundKeydownHandler);
@@ -87,6 +94,10 @@ export class BetterSpotifyCard extends LitElement {
     super.disconnectedCallback();
     if (this.boundKeydownHandler) {
       window.removeEventListener('keydown', this.boundKeydownHandler);
+    }
+    if (this.volumeDebounceTimer) {
+      clearTimeout(this.volumeDebounceTimer);
+      this.volumeDebounceTimer = undefined;
     }
     this.stopPositionTicker();
     this.stopPlaybackRefresh();
@@ -345,19 +356,56 @@ export class BetterSpotifyCard extends LitElement {
     await SpotifyService.seek(this.hass, this.config.entity, newPos);
   }
 
-  private async handleVolume(e: Event): Promise<void> {
-    const target = e.target as HTMLInputElement;
-    const vol = parseFloat(target.value);
-    await SpotifyService.setVolume(this.hass, this.config.entity, vol);
+  private handleToggleVolumeMenu(e?: Event): void {
+    e?.stopPropagation();
+    this.volumeMenuOpen = !this.volumeMenuOpen;
+  }
+
+  private handleVolumeInput(e: Event): void {
+    e.stopPropagation();
+    const val = Number((e.target as HTMLInputElement).value);
+    this.localVolume = val;
+
+    if (this.volumeDebounceTimer) {
+      clearTimeout(this.volumeDebounceTimer);
+    }
+    this.volumeDebounceTimer = window.setTimeout(() => {
+      if (this.hass && this.config?.entity) {
+        SpotifyService.setVolume(this.hass, this.config.entity, val);
+      }
+    }, 120);
+  }
+
+  private async handleVolumeChange(e: Event): Promise<void> {
+    e.stopPropagation();
+    const val = Number((e.target as HTMLInputElement).value);
+    this.localVolume = val;
+    if (this.volumeDebounceTimer) {
+      clearTimeout(this.volumeDebounceTimer);
+      this.volumeDebounceTimer = undefined;
+    }
+    if (this.hass && this.config?.entity) {
+      await SpotifyService.setVolume(this.hass, this.config.entity, val);
+    }
+    setTimeout(() => {
+      this.localVolume = null;
+    }, 1200);
   }
 
   private async handleVolumeStep(deltaPercent: number, e?: Event): Promise<void> {
     e?.stopPropagation();
+    if (!this.hass || !this.config?.entity) return;
     const entity = this.hass.states[this.config.entity];
     if (!entity) return;
-    const currentVol = Math.round((entity.attributes.volume_level ?? 0.5) * 100);
+    const currentVol = this.localVolume !== null
+      ? this.localVolume
+      : Math.round((entity.attributes.volume_level ?? 0.5) * 100);
     const newVol = Math.max(0, Math.min(100, currentVol + deltaPercent));
+    this.localVolume = newVol;
     await SpotifyService.setVolume(this.hass, this.config.entity, newVol);
+    setTimeout(() => {
+      this.localVolume = null;
+    }, 1200);
   }
 
   private async handleSelectDevice(device: SpotifyConnectDevice): Promise<void> {
@@ -638,10 +686,63 @@ export class BetterSpotifyCard extends LitElement {
     const picture = entity.attributes.entity_picture;
     const duration = entity.attributes.media_duration || 0;
     const progressPercent = duration > 0 ? Math.min(100, Math.max(0, (this.currentPosition / duration) * 100)) : 0;
-    const volumeLevel = Math.round((entity.attributes.volume_level ?? 0.5) * 100);
+    const volumeLevel = this.localVolume !== null
+      ? this.localVolume
+      : Math.round((entity.attributes.volume_level ?? 0.5) * 100);
+    const volumeIcon = volumeLevel === 0 ? icons.volumeLow : (volumeLevel < 50 ? icons.volumeLow : icons.volumeHigh);
 
     return html`
       <div class="now-playing-section">
+        <!-- Optional: Fine Volume Slider Popover -->
+        ${this.volumeMenuOpen
+          ? html`
+            <div class="volume-popover">
+              <button
+                class="btn-vol-step"
+                title="Diminuer le volume (-1%)"
+                @click=${(e: Event) => this.handleVolumeStep(-1, e)}
+              >
+                <span>−</span>
+              </button>
+
+              <div class="volume-slider-wrapper">
+                <input
+                  type="range"
+                  class="volume-slider"
+                  min="0"
+                  max="100"
+                  step="1"
+                  .value=${volumeLevel}
+                  style="--volume-percent: ${volumeLevel}%;"
+                  @input=${(e: Event) => this.handleVolumeInput(e)}
+                  @change=${(e: Event) => this.handleVolumeChange(e)}
+                />
+              </div>
+
+              <button
+                class="btn-vol-step"
+                title="Augmenter le volume (+1%)"
+                @click=${(e: Event) => this.handleVolumeStep(1, e)}
+              >
+                <span>+</span>
+              </button>
+
+              <span class="volume-percent-label">${volumeLevel}%</span>
+
+              <button
+                class="btn-vol-close"
+                title="Fermer le menu volume"
+                @click=${(e: Event) => {
+                  e.stopPropagation();
+                  this.volumeMenuOpen = false;
+                }}
+              >
+                ${icons.close}
+              </button>
+            </div>
+          `
+          : ''}
+
         <!-- Line 1: Seek / timeline bar on top -->
         <div class="desktop-seek-row">
           <span class="desktop-seek-time">${formatSeconds(this.currentPosition)}</span>
@@ -691,7 +792,7 @@ export class BetterSpotifyCard extends LitElement {
             </button>
           </div>
 
-          <!-- Right: MODE LECTURE (Shuffle) VOLUME - VOLUME + -->
+          <!-- Right: MODE LECTURE (Shuffle) & Single Volume Button -->
           <div class="desktop-col-right">
             <button
               class="btn-shuffle-toggle ${entity.attributes.shuffle ? 'active' : ''}"
@@ -702,21 +803,12 @@ export class BetterSpotifyCard extends LitElement {
             </button>
 
             <button
-              class="btn-vol"
-              title="Volume - (-5%)"
-              @click=${(e: Event) => this.handleVolumeStep(-5, e)}
+              class="btn-vol-trigger ${this.volumeMenuOpen ? 'active' : ''}"
+              title="Régler le volume (${volumeLevel}%)"
+              @click=${(e: Event) => this.handleToggleVolumeMenu(e)}
             >
-              ${icons.volumeLow}
-              <span>-</span>
-            </button>
-
-            <button
-              class="btn-vol"
-              title="Volume + (+5%)"
-              @click=${(e: Event) => this.handleVolumeStep(5, e)}
-            >
-              <span>+</span>
-              ${icons.volumeHigh}
+              ${volumeIcon}
+              <span class="vol-label">${volumeLevel}%</span>
             </button>
           </div>
         </div>
@@ -1131,7 +1223,7 @@ if (!customElements.get('better-spotify-card')) {
 });
 
 console.info(
-  '%c BETTER-SPOTIFY-CARD %c v1.6.0 ',
+  '%c BETTER-SPOTIFY-CARD %c v1.7.0 ',
   'color: white; background: #1DB954; font-weight: 700; border-radius: 3px 0 0 3px;',
   'color: white; background: #282828; font-weight: 700; border-radius: 0 3px 3px 0;'
 );
