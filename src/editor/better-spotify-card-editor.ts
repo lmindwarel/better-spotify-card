@@ -28,12 +28,6 @@ const SCHEMA = [
       },
     },
   },
-  {
-    name: 'default_device',
-    selector: {
-      text: {},
-    },
-  },
 ];
 
 export const loadHaForm = async (): Promise<void> => {
@@ -87,9 +81,6 @@ export class BetterSpotifyCardEditor extends LitElement {
       ...this._config,
       ...value,
     };
-    if (newConfig.default_device === '') {
-      delete newConfig.default_device;
-    }
     this._config = newConfig;
     this.dispatchEvent(
       new CustomEvent('config-changed', {
@@ -106,8 +97,6 @@ export class BetterSpotifyCardEditor extends LitElement {
         return 'Lecteur Spotify (Entité media_player)';
       case 'default_tab':
         return 'Onglet affiché par défaut';
-      case 'default_device':
-        return 'Appareil Spotify par défaut (optionnel)';
       default:
         return schema.name;
     }
@@ -119,8 +108,6 @@ export class BetterSpotifyCardEditor extends LitElement {
         return 'Sélectionnez le compte Spotify ou SpotifyPlus à contrôler';
       case 'default_tab':
         return 'Onglet affiché lors de l’ouverture de la popup';
-      case 'default_device':
-        return 'Nom ou ID de l’enceinte/PC cible si aucun lecteur n’est actif';
       default:
         return '';
     }

@@ -1294,7 +1294,7 @@ if (!cardAlreadyRegistered) {
     name: 'Better Spotify Card',
     description: 'Lecteur Spotify élégant style Android avec popup type Bubble-Card',
     preview: true,
-    documentationURL: 'https://github.com/antoine/better-spotify-card',
+    documentationURL: 'https://github.com/lmindwarel/better-spotify-card',
   });
 }
 
