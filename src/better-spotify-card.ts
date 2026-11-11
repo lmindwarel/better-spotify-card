@@ -6,6 +6,7 @@ import { SpotifyService } from './services/spotify-service';
 import { cardStyles } from './styles/card-styles';
 import { icons } from './utils/icons';
 import { formatDuration, formatSeconds } from './utils/format';
+import { loadHaForm } from './editor/better-spotify-card-editor';
 
 export class BetterSpotifyCard extends LitElement {
   public static styles = cardStyles;
@@ -50,8 +51,8 @@ export class BetterSpotifyCard extends LitElement {
   private initialRefreshDone = false;
 
   public setConfig(config: BetterSpotifyCardConfig): void {
-    if (!config.entity) {
-      throw new Error('Veuillez spécifier une entité Spotify (ex: media_player.spotify_antoine_delaroue)');
+    if (!config) {
+      throw new Error('Configuration invalide');
     }
     this.config = {
       default_tab: 'liked',
@@ -66,10 +67,46 @@ export class BetterSpotifyCard extends LitElement {
     return 2;
   }
 
-  public static getStubConfig(): Record<string, any> {
+  public static async getConfigElement(): Promise<HTMLElement> {
+    await loadHaForm();
+    return document.createElement('better-spotify-card-editor');
+  }
+
+  public static getStubConfig(
+    hass?: HomeAssistant,
+    _entities?: string[],
+    _entitiesFallback?: string[]
+  ): Record<string, any> {
+    let chosenEntity = '';
+
+    if (hass?.states) {
+      const stateKeys = Object.keys(hass.states);
+
+      // 1. Prioritize Spotify / SpotifyPlus entities
+      const spotifyEntity = stateKeys.find((id) => {
+        if (!id.startsWith('media_player.')) return false;
+        const state = hass.states[id];
+        const platform = state?.attributes?.platform || '';
+        return (
+          id.includes('spotify') ||
+          platform === 'spotifyplus' ||
+          platform === 'spotify'
+        );
+      });
+
+      if (spotifyEntity) {
+        chosenEntity = spotifyEntity;
+      } else {
+        // 2. Otherwise any media_player entity
+        const anyMediaPlayer = stateKeys.find((id) => id.startsWith('media_player.'));
+        if (anyMediaPlayer) {
+          chosenEntity = anyMediaPlayer;
+        }
+      }
+    }
+
     return {
-      entity: 'media_player.spotifyplus_account',
-      title: 'Spotify',
+      entity: chosenEntity,
       default_tab: 'liked',
     };
   }
@@ -105,13 +142,13 @@ export class BetterSpotifyCard extends LitElement {
 
   private startPlaybackRefresh(): void {
     this.stopPlaybackRefresh();
-    // Immediate refresh on startup
-    if (this.hass && this.config?.entity) {
+    // Immediate refresh on startup only if entity is known in states
+    if (this.hass && this.config?.entity && this.hass.states[this.config.entity]) {
       SpotifyService.refreshPlaybackState(this.hass, this.config.entity);
     }
     // Periodic refresh every 15 seconds
     this.refreshStateInterval = window.setInterval(() => {
-      if (this.hass && this.config?.entity) {
+      if (this.hass && this.config?.entity && this.hass.states[this.config.entity]) {
         SpotifyService.refreshPlaybackState(this.hass, this.config.entity);
       }
     }, 15000);
@@ -534,17 +571,51 @@ export class BetterSpotifyCard extends LitElement {
 
   protected render(): TemplateResult {
     if (!this.hass || !this.config?.entity) {
-      return html`<div class="mini-card">Entité Spotify non configurée</div>`;
+      return this.renderConfigPlaceholder();
     }
 
     const entity = this.hass.states[this.config.entity];
     if (!entity) {
-      return html`<div class="mini-card">Entité introuvable : ${this.config.entity}</div>`;
+      return this.renderConfigPlaceholder();
     }
 
     return html`
       ${this.renderMiniCard(entity)}
       ${this.popupOpen ? this.renderBubblePopup(entity) : ''}
+    `;
+  }
+
+  /**
+   * Preview / Placeholder card when no entity is selected or entity is not found
+   */
+  private renderConfigPlaceholder(): TemplateResult {
+    const isConfigured = Boolean(this.config?.entity);
+    const subtitle = isConfigured
+      ? `Entité "${this.config!.entity}" introuvable`
+      : 'Sélectionnez votre lecteur Spotify dans l’éditeur';
+
+    return html`
+      <div class="mini-card placeholder">
+        <div class="mini-main-row">
+          <div class="mini-cover">${icons.spotify}</div>
+          <div class="mini-info">
+            <div class="mini-title">Better Spotify Card</div>
+            <div class="mini-artist">${subtitle}</div>
+            <div class="mini-device-badge">
+              ${icons.speaker}
+              <span>Spotify Connect</span>
+            </div>
+          </div>
+          <div class="mini-controls">
+            <button class="btn-icon" disabled title="Précédent">${icons.skipPrevious}</button>
+            <button class="btn-icon btn-play-mini" disabled title="Lecture">${icons.play}</button>
+            <button class="btn-icon" disabled title="Suivant">${icons.skipNext}</button>
+          </div>
+        </div>
+        <div class="mini-progress-bar">
+          <div class="mini-progress-fill" style="width: 35%;"></div>
+        </div>
+      </div>
     `;
   }
 
@@ -1214,16 +1285,21 @@ if (!customElements.get('better-spotify-card')) {
 
 // Register with Home Assistant Lovelace Card Picker
 (window as any).customCards = (window as any).customCards || [];
-(window as any).customCards.push({
-  type: 'better-spotify-card',
-  name: 'Better Spotify Card',
-  description: 'Lecteur Spotify élégant style Android avec popup type Bubble-Card',
-  preview: true,
-  documentationURL: 'https://github.com/antoine/better-spotify-card',
-});
+const cardAlreadyRegistered = (window as any).customCards.some(
+  (c: any) => c.type === 'better-spotify-card'
+);
+if (!cardAlreadyRegistered) {
+  (window as any).customCards.push({
+    type: 'better-spotify-card',
+    name: 'Better Spotify Card',
+    description: 'Lecteur Spotify élégant style Android avec popup type Bubble-Card',
+    preview: true,
+    documentationURL: 'https://github.com/antoine/better-spotify-card',
+  });
+}
 
 console.info(
-  '%c BETTER-SPOTIFY-CARD %c v1.7.1 ',
+  '%c BETTER-SPOTIFY-CARD %c v1.8.0 ',
   'color: white; background: #1DB954; font-weight: 700; border-radius: 3px 0 0 3px;',
   'color: white; background: #282828; font-weight: 700; border-radius: 0 3px 3px 0;'
 );

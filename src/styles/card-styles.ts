@@ -51,6 +51,32 @@ export const cardStyles = css`
     transform: scale(0.99);
   }
 
+  .mini-card.placeholder {
+    cursor: default;
+    border-style: dashed;
+    border-color: rgba(29, 185, 84, 0.4);
+  }
+
+  .mini-card.placeholder:hover {
+    transform: none;
+    background: var(--bsc-surface);
+  }
+
+  .mini-card.placeholder .mini-cover {
+    background: #1db954;
+  }
+
+  .mini-card.placeholder .mini-cover svg {
+    fill: #ffffff;
+    width: 32px;
+    height: 32px;
+  }
+
+  .mini-card.placeholder .btn-icon:disabled {
+    opacity: 0.35;
+    cursor: default;
+  }
+
   .mini-main-row {
     display: flex;
     align-items: center;
