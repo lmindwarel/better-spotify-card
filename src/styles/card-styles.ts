@@ -785,6 +785,7 @@ export const cardStyles = css`
     transition: all 0.15s ease;
     user-select: none;
     font-variant-numeric: tabular-nums;
+    flex-shrink: 0;
   }
 
   .btn-vol-trigger:hover {
@@ -948,12 +949,14 @@ export const cardStyles = css`
     cursor: pointer;
     width: 32px;
     height: 32px;
+    min-width: 32px;
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
     transition: color 0.15s ease, background 0.15s ease, transform 0.1s ease;
     padding: 0;
+    flex-shrink: 0;
   }
 
   .btn-shuffle-toggle:hover {

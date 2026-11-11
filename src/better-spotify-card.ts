@@ -1223,7 +1223,7 @@ if (!customElements.get('better-spotify-card')) {
 });
 
 console.info(
-  '%c BETTER-SPOTIFY-CARD %c v1.7.0 ',
+  '%c BETTER-SPOTIFY-CARD %c v1.7.1 ',
   'color: white; background: #1DB954; font-weight: 700; border-radius: 3px 0 0 3px;',
   'color: white; background: #282828; font-weight: 700; border-radius: 0 3px 3px 0;'
 );
