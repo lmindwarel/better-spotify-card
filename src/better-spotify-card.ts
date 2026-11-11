@@ -47,6 +47,8 @@ export class BetterSpotifyCard extends LitElement {
   private positionTickerInterval?: number;
   private refreshStateInterval?: number;
   private volumeDebounceTimer?: number;
+  private volumeInactivityTimer?: number;
+  private boundOutsideClickListener?: (e: MouseEvent | PointerEvent) => void;
   private boundKeydownHandler?: (e: KeyboardEvent) => void;
   private initialRefreshDone = false;
 
@@ -116,7 +118,7 @@ export class BetterSpotifyCard extends LitElement {
     this.boundKeydownHandler = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
         if (this.volumeMenuOpen) {
-          this.volumeMenuOpen = false;
+          this.closeVolumeMenu();
         } else if (this.popupOpen) {
           this.closePopup();
         }
@@ -136,6 +138,7 @@ export class BetterSpotifyCard extends LitElement {
       clearTimeout(this.volumeDebounceTimer);
       this.volumeDebounceTimer = undefined;
     }
+    this.closeVolumeMenu();
     this.stopPositionTicker();
     this.stopPlaybackRefresh();
   }
@@ -226,6 +229,7 @@ export class BetterSpotifyCard extends LitElement {
   }
 
   private closePopup(): void {
+    this.closeVolumeMenu();
     this.popupOpen = false;
   }
 
@@ -395,11 +399,68 @@ export class BetterSpotifyCard extends LitElement {
 
   private handleToggleVolumeMenu(e?: Event): void {
     e?.stopPropagation();
-    this.volumeMenuOpen = !this.volumeMenuOpen;
+    if (this.volumeMenuOpen) {
+      this.closeVolumeMenu();
+    } else {
+      this.openVolumeMenu();
+    }
+  }
+
+  private openVolumeMenu(): void {
+    this.volumeMenuOpen = true;
+    this.resetVolumeInactivityTimer();
+    this.attachOutsideClickListener();
+  }
+
+  private closeVolumeMenu(): void {
+    this.volumeMenuOpen = false;
+    this.clearVolumeInactivityTimer();
+    this.detachOutsideClickListener();
+  }
+
+  private resetVolumeInactivityTimer(): void {
+    this.clearVolumeInactivityTimer();
+    this.volumeInactivityTimer = window.setTimeout(() => {
+      this.closeVolumeMenu();
+    }, 20000); // 20s of inactivity
+  }
+
+  private clearVolumeInactivityTimer(): void {
+    if (this.volumeInactivityTimer) {
+      clearTimeout(this.volumeInactivityTimer);
+      this.volumeInactivityTimer = undefined;
+    }
+  }
+
+  private attachOutsideClickListener(): void {
+    this.detachOutsideClickListener();
+    this.boundOutsideClickListener = (e: MouseEvent | PointerEvent) => {
+      if (!this.volumeMenuOpen) return;
+      const path = e.composedPath();
+      const isInside = path.some((el) => {
+        if (!(el instanceof HTMLElement)) return false;
+        return (
+          el.classList?.contains('volume-popover') ||
+          el.classList?.contains('btn-vol-trigger')
+        );
+      });
+      if (!isInside) {
+        this.closeVolumeMenu();
+      }
+    };
+    window.addEventListener('pointerdown', this.boundOutsideClickListener, { capture: true });
+  }
+
+  private detachOutsideClickListener(): void {
+    if (this.boundOutsideClickListener) {
+      window.removeEventListener('pointerdown', this.boundOutsideClickListener, { capture: true });
+      this.boundOutsideClickListener = undefined;
+    }
   }
 
   private handleVolumeInput(e: Event): void {
     e.stopPropagation();
+    this.resetVolumeInactivityTimer();
     const val = Number((e.target as HTMLInputElement).value);
     this.localVolume = val;
 
@@ -415,6 +476,7 @@ export class BetterSpotifyCard extends LitElement {
 
   private async handleVolumeChange(e: Event): Promise<void> {
     e.stopPropagation();
+    this.resetVolumeInactivityTimer();
     const val = Number((e.target as HTMLInputElement).value);
     this.localVolume = val;
     if (this.volumeDebounceTimer) {
@@ -431,6 +493,7 @@ export class BetterSpotifyCard extends LitElement {
 
   private async handleVolumeStep(deltaPercent: number, e?: Event): Promise<void> {
     e?.stopPropagation();
+    this.resetVolumeInactivityTimer();
     if (!this.hass || !this.config?.entity) return;
     const entity = this.hass.states[this.config.entity];
     if (!entity) return;
@@ -767,7 +830,11 @@ export class BetterSpotifyCard extends LitElement {
         <!-- Optional: Fine Volume Slider Popover -->
         ${this.volumeMenuOpen
           ? html`
-            <div class="volume-popover">
+            <div
+              class="volume-popover"
+              @pointerdown=${() => this.resetVolumeInactivityTimer()}
+              @touchstart=${() => this.resetVolumeInactivityTimer()}
+            >
               <button
                 class="btn-vol-step"
                 title="Diminuer le volume (-1%)"
@@ -805,7 +872,7 @@ export class BetterSpotifyCard extends LitElement {
                 title="Fermer le menu volume"
                 @click=${(e: Event) => {
                   e.stopPropagation();
-                  this.volumeMenuOpen = false;
+                  this.closeVolumeMenu();
                 }}
               >
                 ${icons.close}
@@ -1299,7 +1366,7 @@ if (!cardAlreadyRegistered) {
 }
 
 console.info(
-  '%c BETTER-SPOTIFY-CARD %c v1.8.0 ',
+  '%c BETTER-SPOTIFY-CARD %c v1.8.1 ',
   'color: white; background: #1DB954; font-weight: 700; border-radius: 3px 0 0 3px;',
   'color: white; background: #282828; font-weight: 700; border-radius: 0 3px 3px 0;'
 );

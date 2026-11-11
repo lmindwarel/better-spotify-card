@@ -1,6 +1,6 @@
 {
   "name": "better-spotify-card",
-  "version": "1.8.0",
+  "version": "1.8.1",
   "description": "A modern Spotify Android style Lovelace card for Home Assistant with Bubble-Card popup",
   "type": "module",
   "main": "dist/better-spotify-card.js",

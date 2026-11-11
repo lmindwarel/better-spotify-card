@@ -1,4 +1,992 @@
-var t=globalThis,e=t.ShadowRoot&&(void 0===t.ShadyCSS||t.ShadyCSS.nativeShadow)&&"adoptedStyleSheets"in Document.prototype&&"replace"in CSSStyleSheet.prototype,i=Symbol(),s=/* @__PURE__ */new WeakMap,a=class{constructor(t,e,s){if(this._$cssResult$=!0,s!==i)throw Error("CSSResult is not constructable. Use `unsafeCSS` or `css` instead.");this.cssText=t,this.t=e}get styleSheet(){let t=this.o;const i=this.t;if(e&&void 0===t){const e=void 0!==i&&1===i.length;e&&(t=s.get(i)),void 0===t&&((this.o=t=new CSSStyleSheet).replaceSync(this.cssText),e&&s.set(i,t))}return t}toString(){return this.cssText}},r=(t,...e)=>{const s=1===t.length?t[0]:e.reduce((e,i,s)=>e+(t=>{if(!0===t._$cssResult$)return t.cssText;if("number"==typeof t)return t;throw Error("Value passed to 'css' function must be a 'css' function result: "+t+". Use 'unsafeCSS' to pass non-literal values, but take care to ensure page security.")})(i)+t[s+1],t[0]);return new a(s,t,i)},o=e?t=>t:t=>t instanceof CSSStyleSheet?(t=>{let e="";for(const i of t.cssRules)e+=i.cssText;return(t=>new a("string"==typeof t?t:t+"",void 0,i))(e)})(t):t,{is:n,defineProperty:l,getOwnPropertyDescriptor:c,getOwnPropertyNames:d,getOwnPropertySymbols:h,getPrototypeOf:p}=Object,u=globalThis,v=u.trustedTypes,m=v?v.emptyScript:"",b=u.reactiveElementPolyfillSupport,g=(t,e)=>t,f={toAttribute(t,e){switch(e){case Boolean:t=t?m:null;break;case Object:case Array:t=null==t?t:JSON.stringify(t)}return t},fromAttribute(t,e){let i=t;switch(e){case Boolean:i=null!==t;break;case Number:i=null===t?null:Number(t);break;case Object:case Array:try{i=JSON.parse(t)}catch(t){i=null}}return i}},y=(t,e)=>!n(t,e),x={attribute:!0,type:String,converter:f,reflect:!1,useDefault:!1,hasChanged:y};Symbol.metadata??=Symbol("metadata"),u.litPropertyMetadata??=/* @__PURE__ */new WeakMap;var k=class extends HTMLElement{static addInitializer(t){this._$Ei(),(this.l??=[]).push(t)}static get observedAttributes(){return this.finalize(),this._$Eh&&[...this._$Eh.keys()]}static createProperty(t,e=x){if(e.state&&(e.attribute=!1),this._$Ei(),this.prototype.hasOwnProperty(t)&&((e=Object.create(e)).wrapped=!0),this.elementProperties.set(t,e),!e.noAccessor){const i=Symbol(),s=this.getPropertyDescriptor(t,i,e);void 0!==s&&l(this.prototype,t,s)}}static getPropertyDescriptor(t,e,i){const{get:s,set:a}=c(this.prototype,t)??{get(){return this[e]},set(t){this[e]=t}};return{get:s,set(e){const r=s?.call(this);a?.call(this,e),this.requestUpdate(t,r,i)},configurable:!0,enumerable:!0}}static getPropertyOptions(t){return this.elementProperties.get(t)??x}static _$Ei(){if(this.hasOwnProperty(g("elementProperties")))return;const t=p(this);t.finalize(),void 0!==t.l&&(this.l=[...t.l]),this.elementProperties=new Map(t.elementProperties)}static finalize(){if(this.hasOwnProperty(g("finalized")))return;if(this.finalized=!0,this._$Ei(),this.hasOwnProperty(g("properties"))){const t=this.properties,e=[...d(t),...h(t)];for(const i of e)this.createProperty(i,t[i])}const t=this[Symbol.metadata];if(null!==t){const e=litPropertyMetadata.get(t);if(void 0!==e)for(const[t,i]of e)this.elementProperties.set(t,i)}this._$Eh=/* @__PURE__ */new Map;for(const[e,i]of this.elementProperties){const t=this._$Eu(e,i);void 0!==t&&this._$Eh.set(t,e)}this.elementStyles=this.finalizeStyles(this.styles)}static finalizeStyles(t){const e=[];if(Array.isArray(t)){const i=new Set(t.flat(1/0).reverse());for(const t of i)e.unshift(o(t))}else void 0!==t&&e.push(o(t));return e}static _$Eu(t,e){const i=e.attribute;return!1===i?void 0:"string"==typeof i?i:"string"==typeof t?t.toLowerCase():void 0}constructor(){super(),this._$Ep=void 0,this.isUpdatePending=!1,this.hasUpdated=!1,this._$Em=null,this._$Ev()}_$Ev(){this._$ES=new Promise(t=>this.enableUpdating=t),this._$AL=/* @__PURE__ */new Map,this._$E_(),this.requestUpdate(),this.constructor.l?.forEach(t=>t(this))}addController(t){(this._$EO??=/* @__PURE__ */new Set).add(t),void 0!==this.renderRoot&&this.isConnected&&t.hostConnected?.()}removeController(t){this._$EO?.delete(t)}_$E_(){const t=/* @__PURE__ */new Map,e=this.constructor.elementProperties;for(const i of e.keys())this.hasOwnProperty(i)&&(t.set(i,this[i]),delete this[i]);t.size>0&&(this._$Ep=t)}createRenderRoot(){const i=this.shadowRoot??this.attachShadow(this.constructor.shadowRootOptions);return((i,s)=>{if(e)i.adoptedStyleSheets=s.map(t=>t instanceof CSSStyleSheet?t:t.styleSheet);else for(const e of s){const s=document.createElement("style"),a=t.litNonce;void 0!==a&&s.setAttribute("nonce",a),s.textContent=e.cssText,i.appendChild(s)}})(i,this.constructor.elementStyles),i}connectedCallback(){this.renderRoot??=this.createRenderRoot(),this.enableUpdating(!0),this._$EO?.forEach(t=>t.hostConnected?.())}enableUpdating(t){}disconnectedCallback(){this._$EO?.forEach(t=>t.hostDisconnected?.())}attributeChangedCallback(t,e,i){this._$AK(t,i)}_$ET(t,e){const i=this.constructor.elementProperties.get(t),s=this.constructor._$Eu(t,i);if(void 0!==s&&!0===i.reflect){const a=(void 0!==i.converter?.toAttribute?i.converter:f).toAttribute(e,i.type);this._$Em=t,null==a?this.removeAttribute(s):this.setAttribute(s,a),this._$Em=null}}_$AK(t,e){const i=this.constructor,s=i._$Eh.get(t);if(void 0!==s&&this._$Em!==s){const t=i.getPropertyOptions(s),a="function"==typeof t.converter?{fromAttribute:t.converter}:void 0!==t.converter?.fromAttribute?t.converter:f;this._$Em=s;const r=a.fromAttribute(e,t.type);this[s]=r??this._$Ej?.get(s)??r,this._$Em=null}}requestUpdate(t,e,i,s=!1,a){if(void 0!==t){const r=this.constructor;if(!1===s&&(a=this[t]),i??=r.getPropertyOptions(t),!((i.hasChanged??y)(a,e)||i.useDefault&&i.reflect&&a===this._$Ej?.get(t)&&!this.hasAttribute(r._$Eu(t,i))))return;this.C(t,e,i)}!1===this.isUpdatePending&&(this._$ES=this._$EP())}C(t,e,{useDefault:i,reflect:s,wrapped:a},r){i&&!(this._$Ej??=/* @__PURE__ */new Map).has(t)&&(this._$Ej.set(t,r??e??this[t]),!0!==a||void 0!==r)||(this._$AL.has(t)||(this.hasUpdated||i||(e=void 0),this._$AL.set(t,e)),!0===s&&this._$Em!==t&&(this._$Eq??=/* @__PURE__ */new Set).add(t))}async _$EP(){this.isUpdatePending=!0;try{await this._$ES}catch(t){Promise.reject(t)}const t=this.scheduleUpdate();return null!=t&&await t,!this.isUpdatePending}scheduleUpdate(){return this.performUpdate()}performUpdate(){if(!this.isUpdatePending)return;if(!this.hasUpdated){if(this.renderRoot??=this.createRenderRoot(),this._$Ep){for(const[t,e]of this._$Ep)this[t]=e;this._$Ep=void 0}const t=this.constructor.elementProperties;if(t.size>0)for(const[e,i]of t){const{wrapped:t}=i,s=this[e];!0!==t||this._$AL.has(e)||void 0===s||this.C(e,void 0,i,s)}}let t=!1;const e=this._$AL;try{t=this.shouldUpdate(e),t?(this.willUpdate(e),this._$EO?.forEach(t=>t.hostUpdate?.()),this.update(e)):this._$EM()}catch(e){throw t=!1,this._$EM(),e}t&&this._$AE(e)}willUpdate(t){}_$AE(t){this._$EO?.forEach(t=>t.hostUpdated?.()),this.hasUpdated||(this.hasUpdated=!0,this.firstUpdated(t)),this.updated(t)}_$EM(){this._$AL=/* @__PURE__ */new Map,this.isUpdatePending=!1}get updateComplete(){return this.getUpdateComplete()}getUpdateComplete(){return this._$ES}shouldUpdate(t){return!0}update(t){this._$Eq&&=this._$Eq.forEach(t=>this._$ET(t,this[t])),this._$EM()}updated(t){}firstUpdated(t){}};k.elementStyles=[],k.shadowRootOptions={mode:"open"},k[g("elementProperties")]=/* @__PURE__ */new Map,k[g("finalized")]=/* @__PURE__ */new Map,b?.({ReactiveElement:k}),(u.reactiveElementVersions??=[]).push("2.1.2");var $=globalThis,_=t=>t,w=$.trustedTypes,T=w?w.createPolicy("lit-html",{createHTML:t=>t}):void 0,P="$lit$",S=`lit$${Math.random().toFixed(9).slice(2)}$`,A="?"+S,C=`<${A}>`,E=document,M=()=>E.createComment(""),z=t=>null===t||"object"!=typeof t&&"function"!=typeof t,L=Array.isArray,D="[ \t\n\f\r]",O=/<(?:(!--|\/[^a-zA-Z])|(\/?[a-zA-Z][^>\s]*)|(\/?$))/g,R=/-->/g,N=/>/g,H=RegExp(`>|${D}(?:([^\\s"'>=/]+)(${D}*=${D}*(?:[^ \t\n\f\r"'\`<>=]|("|')|))|$)`,"g"),B=/'/g,V=/"/g,U=/^(?:script|style|textarea|title)$/i,I=t=>(e,...i)=>({_$litType$:t,strings:e,values:i}),j=I(1),W=I(2),q=(I(3),Symbol.for("lit-noChange")),Y=Symbol.for("lit-nothing"),Q=/* @__PURE__ */new WeakMap,F=E.createTreeWalker(E,129);function K(t,e){if(!L(t)||!t.hasOwnProperty("raw"))throw Error("invalid template strings array");return void 0!==T?T.createHTML(e):e}var G=(t,e)=>{const i=t.length-1,s=[];let a,r=2===e?"<svg>":3===e?"<math>":"",o=O;for(let n=0;n<i;n++){const e=t[n];let i,l,c=-1,d=0;for(;d<e.length&&(o.lastIndex=d,l=o.exec(e),null!==l);)d=o.lastIndex,o===O?"!--"===l[1]?o=R:void 0!==l[1]?o=N:void 0!==l[2]?(U.test(l[2])&&(a=RegExp("</"+l[2],"g")),o=H):void 0!==l[3]&&(o=H):o===H?">"===l[0]?(o=a??O,c=-1):void 0===l[1]?c=-2:(c=o.lastIndex-l[2].length,i=l[1],o=void 0===l[3]?H:'"'===l[3]?V:B):o===V||o===B?o=H:o===R||o===N?o=O:(o=H,a=void 0);const h=o===H&&t[n+1].startsWith("/>")?" ":"";r+=o===O?e+C:c>=0?(s.push(i),e.slice(0,c)+P+e.slice(c)+S+h):e+S+(-2===c?n:h)}return[K(t,r+(t[i]||"<?>")+(2===e?"</svg>":3===e?"</math>":"")),s]},J=class t{constructor({strings:e,_$litType$:i},s){let a;this.parts=[];let r=0,o=0;const n=e.length-1,l=this.parts,[c,d]=G(e,i);if(this.el=t.createElement(c,s),F.currentNode=this.el.content,2===i||3===i){const t=this.el.content.firstChild;t.replaceWith(...t.childNodes)}for(;null!==(a=F.nextNode())&&l.length<n;){if(1===a.nodeType){if(a.hasAttributes())for(const t of a.getAttributeNames())if(t.endsWith(P)){const e=d[o++],i=a.getAttribute(t).split(S),s=/([.?@])?(.*)/.exec(e);l.push({type:1,index:r,name:s[2],strings:i,ctor:"."===s[1]?it:"?"===s[1]?st:"@"===s[1]?at:et}),a.removeAttribute(t)}else t.startsWith(S)&&(l.push({type:6,index:r}),a.removeAttribute(t));if(U.test(a.tagName)){const t=a.textContent.split(S),e=t.length-1;if(e>0){a.textContent=w?w.emptyScript:"";for(let i=0;i<e;i++)a.append(t[i],M()),F.nextNode(),l.push({type:2,index:++r});a.append(t[e],M())}}}else if(8===a.nodeType)if(a.data===A)l.push({type:2,index:r});else{let t=-1;for(;-1!==(t=a.data.indexOf(S,t+1));)l.push({type:7,index:r}),t+=S.length-1}r++}}static createElement(t,e){const i=E.createElement("template");return i.innerHTML=t,i}};function Z(t,e,i=t,s){if(e===q)return e;let a=void 0!==s?i._$Co?.[s]:i._$Cl;const r=z(e)?void 0:e._$litDirective$;return a?.constructor!==r&&(a?._$AO?.(!1),void 0===r?a=void 0:(a=new r(t),a._$AT(t,i,s)),void 0!==s?(i._$Co??=[])[s]=a:i._$Cl=a),void 0!==a&&(e=Z(t,a._$AS(t,e.values),a,s)),e}var X=class{constructor(t,e){this._$AV=[],this._$AN=void 0,this._$AD=t,this._$AM=e}get parentNode(){return this._$AM.parentNode}get _$AU(){return this._$AM._$AU}u(t){const{el:{content:e},parts:i}=this._$AD,s=(t?.creationScope??E).importNode(e,!0);F.currentNode=s;let a=F.nextNode(),r=0,o=0,n=i[0];for(;void 0!==n;){if(r===n.index){let e;2===n.type?e=new tt(a,a.nextSibling,this,t):1===n.type?e=new n.ctor(a,n.name,n.strings,this,t):6===n.type&&(e=new rt(a,this,t)),this._$AV.push(e),n=i[++o]}r!==n?.index&&(a=F.nextNode(),r++)}return F.currentNode=E,s}p(t){let e=0;for(const i of this._$AV)void 0!==i&&(void 0!==i.strings?(i._$AI(t,i,e),e+=i.strings.length-2):i._$AI(t[e])),e++}},tt=class t{get _$AU(){return this._$AM?._$AU??this._$Cv}constructor(t,e,i,s){this.type=2,this._$AH=Y,this._$AN=void 0,this._$AA=t,this._$AB=e,this._$AM=i,this.options=s,this._$Cv=s?.isConnected??!0}get parentNode(){let t=this._$AA.parentNode;const e=this._$AM;return void 0!==e&&11===t?.nodeType&&(t=e.parentNode),t}get startNode(){return this._$AA}get endNode(){return this._$AB}_$AI(t,e=this){t=Z(this,t,e),z(t)?t===Y||null==t||""===t?(this._$AH!==Y&&this._$AR(),this._$AH=Y):t!==this._$AH&&t!==q&&this._(t):void 0!==t._$litType$?this.$(t):void 0!==t.nodeType?this.T(t):(t=>L(t)||"function"==typeof t?.[Symbol.iterator])(t)?this.k(t):this._(t)}O(t){return this._$AA.parentNode.insertBefore(t,this._$AB)}T(t){this._$AH!==t&&(this._$AR(),this._$AH=this.O(t))}_(t){this._$AH!==Y&&z(this._$AH)?this._$AA.nextSibling.data=t:this.T(E.createTextNode(t)),this._$AH=t}$(t){const{values:e,_$litType$:i}=t,s="number"==typeof i?this._$AC(t):(void 0===i.el&&(i.el=J.createElement(K(i.h,i.h[0]),this.options)),i);if(this._$AH?._$AD===s)this._$AH.p(e);else{const t=new X(s,this),i=t.u(this.options);t.p(e),this.T(i),this._$AH=t}}_$AC(t){let e=Q.get(t.strings);return void 0===e&&Q.set(t.strings,e=new J(t)),e}k(e){L(this._$AH)||(this._$AH=[],this._$AR());const i=this._$AH;let s,a=0;for(const r of e)a===i.length?i.push(s=new t(this.O(M()),this.O(M()),this,this.options)):s=i[a],s._$AI(r),a++;a<i.length&&(this._$AR(s&&s._$AB.nextSibling,a),i.length=a)}_$AR(t=this._$AA.nextSibling,e){for(this._$AP?.(!1,!0,e);t!==this._$AB;){const e=_(t).nextSibling;_(t).remove(),t=e}}setConnected(t){void 0===this._$AM&&(this._$Cv=t,this._$AP?.(t))}},et=class{get tagName(){return this.element.tagName}get _$AU(){return this._$AM._$AU}constructor(t,e,i,s,a){this.type=1,this._$AH=Y,this._$AN=void 0,this.element=t,this.name=e,this._$AM=s,this.options=a,i.length>2||""!==i[0]||""!==i[1]?(this._$AH=Array(i.length-1).fill(/* @__PURE__ */new String),this.strings=i):this._$AH=Y}_$AI(t,e=this,i,s){const a=this.strings;let r=!1;if(void 0===a)t=Z(this,t,e,0),r=!z(t)||t!==this._$AH&&t!==q,r&&(this._$AH=t);else{const s=t;let o,n;for(t=a[0],o=0;o<a.length-1;o++)n=Z(this,s[i+o],e,o),n===q&&(n=this._$AH[o]),r||=!z(n)||n!==this._$AH[o],n===Y?t=Y:t!==Y&&(t+=(n??"")+a[o+1]),this._$AH[o]=n}r&&!s&&this.j(t)}j(t){t===Y?this.element.removeAttribute(this.name):this.element.setAttribute(this.name,t??"")}},it=class extends et{constructor(){super(...arguments),this.type=3}j(t){this.element[this.name]=t===Y?void 0:t}},st=class extends et{constructor(){super(...arguments),this.type=4}j(t){this.element.toggleAttribute(this.name,!!t&&t!==Y)}},at=class extends et{constructor(t,e,i,s,a){super(t,e,i,s,a),this.type=5}_$AI(t,e=this){if((t=Z(this,t,e,0)??Y)===q)return;const i=this._$AH,s=t===Y&&i!==Y||t.capture!==i.capture||t.once!==i.once||t.passive!==i.passive,a=t!==Y&&(i===Y||s);s&&this.element.removeEventListener(this.name,this,i),a&&this.element.addEventListener(this.name,this,t),this._$AH=t}handleEvent(t){"function"==typeof this._$AH?this._$AH.call(this.options?.host??this.element,t):this._$AH.handleEvent(t)}},rt=class{constructor(t,e,i){this.element=t,this.type=6,this._$AN=void 0,this._$AM=e,this.options=i}get _$AU(){return this._$AM._$AU}_$AI(t){Z(this,t)}},ot=$.litHtmlPolyfillSupport;ot?.(J,tt),($.litHtmlVersions??=[]).push("3.3.3");var nt=globalThis,lt=class extends k{constructor(){super(...arguments),this.renderOptions={host:this},this._$Do=void 0}createRenderRoot(){const t=super.createRenderRoot();return this.renderOptions.renderBefore??=t.firstChild,t}update(t){const e=this.render();this.hasUpdated||(this.renderOptions.isConnected=this.isConnected),super.update(t),this._$Do=((t,e,i)=>{const s=i?.renderBefore??e;let a=s._$litPart$;if(void 0===a){const t=i?.renderBefore??null;s._$litPart$=a=new tt(e.insertBefore(M(),t),t,void 0,i??{})}return a._$AI(t),a})(e,this.renderRoot,this.renderOptions)}connectedCallback(){super.connectedCallback(),this._$Do?.setConnected(!0)}disconnectedCallback(){super.disconnectedCallback(),this._$Do?.setConnected(!1)}render(){return q}};lt._$litElement$=!0,lt.finalized=!0,nt.litElementHydrateSupport?.({LitElement:lt});var ct=nt.litElementPolyfillSupport;ct?.({LitElement:lt}),(nt.litElementVersions??=[]).push("4.2.2");var dt={attribute:!0,type:String,converter:f,reflect:!1,hasChanged:y},ht=(t=dt,e,i)=>{const{kind:s,metadata:a}=i;let r=globalThis.litPropertyMetadata.get(a);if(void 0===r&&globalThis.litPropertyMetadata.set(a,r=/* @__PURE__ */new Map),"setter"===s&&((t=Object.create(t)).wrapped=!0),r.set(i.name,t),"accessor"===s){const{name:s}=i;return{set(i){const a=e.get.call(this);e.set.call(this,i),this.requestUpdate(s,a,t,!0,i)},init(e){return void 0!==e&&this.C(s,void 0,t,e),e}}}if("setter"===s){const{name:s}=i;return function(i){const a=this[s];e.call(this,i),this.requestUpdate(s,a,t,!0,i)}}throw Error("Unsupported decorator location: "+s)};function pt(t){return(e,i)=>"object"==typeof i?ht(t,e,i):((t,e,i)=>{const s=e.hasOwnProperty(i);return e.constructor.createProperty(i,t),s?Object.getOwnPropertyDescriptor(e,i):void 0})(t,e,i)}function ut(t){return pt({...t,state:!0,attribute:!1})}var vt=class{static async refreshPlaybackState(t,e){try{await t.callService("spotifyplus","trigger_scan_interval",{entity_id:e})}catch(T){try{await t.callService("homeassistant","update_entity",{entity_id:e})}catch(i){}}}static async callSpotifyPlusWS(t,e,i,s={}){try{return(await t.callWS({type:"call_service",domain:"spotifyplus",service:e,service_data:{entity_id:i,...s},return_response:!0}))?.response}catch(a){throw console.warn(`[BetterSpotifyCard] spotifyplus.${e} call failed:`,a),a}}static async getConnectDevices(t,e){try{const i=await this.callSpotifyPlusWS(t,"get_spotify_connect_devices",e,{refresh:!0}),s=i?.result?.devices||i?.result||[];if(Array.isArray(s))return s.map(t=>({id:t.id||t.device_id||t.name,name:t.name||"Appareil Spotify",type:t.type||"Speaker",is_active:Boolean(t.is_active),is_private_session:t.is_private_session,is_restricted:t.is_restricted,volume_percent:t.volume_percent,supports_volume:t.supports_volume}))}catch(T){console.warn("[BetterSpotifyCard] Falling back to entity source_list for connect devices")}const i=t.states[e];if(i?.attributes?.source_list){const t=i.attributes.source;return i.attributes.source_list.map(e=>({id:e,name:e,type:"Speaker",is_active:e===t}))}return[]}static async transferPlayback(t,e,i){try{return void(await t.callService("spotifyplus","player_transfer_playback",{entity_id:e,device_id:i,play:!0}))}catch(T){await t.callService("media_player","select_source",{entity_id:e,source:i})}}static async getPlaylists(t,e,i=200){try{return((await this.callSpotifyPlusWS(t,"get_playlist_favorites",e,{limit:50,limit_total:i,sort_result:!0}))?.result?.items||[]).map(t=>({id:t.id||t.uri,name:t.name||"Sans titre",uri:t.uri,description:t.description,images:t.images||[],tracks_total:t.tracks?.total,owner_name:t.owner?.display_name}))}catch(s){return console.error("[BetterSpotifyCard] Erreur getPlaylists:",s),[]}}static async getPlaylistTracks(t,e,i,s=50,a=0){try{const r=i.replace("spotify:playlist:","").trim(),o=await this.callSpotifyPlusWS(t,"get_playlist_items",e,{playlist_id:r,limit:Math.min(s,50),offset:a}),n=o?.result?.items||[],l=o?.result?.total??n.length;return{items:n.map(t=>{const e=t.track||t.item||t;return e&&e.name?{id:e.id||e.uri,name:e.name||"Titre inconnu",uri:e.uri,duration_ms:e.duration_ms||0,artists:(e.artists||[]).map(t=>({id:t.id||"",name:"string"==typeof t?t:t.name||"Artiste inconnu",uri:t.uri||""})),album:e.album?{id:e.album.id||"",name:e.album.name||"",uri:e.album.uri||"",images:e.album.images||[]}:void 0,is_playable:e.is_playable??!0}:null}).filter(t=>null!==t),total:l,offset:a,limit:s}}catch(r){return console.error("[BetterSpotifyCard] Erreur getPlaylistTracks:",r),{items:[],total:0,offset:a,limit:s}}}static async getLikedTracks(t,e,i=50,s=0){try{const a=await this.callSpotifyPlusWS(t,"get_track_favorites",e,{limit:Math.min(i,50),offset:s,sort_result:!1}),r=a?.result?.items||[],o=a?.result?.total??r.length;return{items:r.map(t=>{const e=t.track||t.item||t;return{id:e.id||e.uri,name:e.name||"Titre inconnu",uri:e.uri,duration_ms:e.duration_ms||0,artists:(e.artists||[]).map(t=>({id:t.id||"",name:"string"==typeof t?t:t.name||"Artiste inconnu",uri:t.uri||""})),album:e.album?{id:e.album.id||"",name:e.album.name||"",uri:e.album.uri||"",images:e.album.images||[]}:void 0,is_playable:e.is_playable??!0}}),total:o,offset:s,limit:i}}catch(a){return console.error("[BetterSpotifyCard] Erreur getLikedTracks:",a),{items:[],total:0,offset:s,limit:i}}}static async searchTracks(t,e,i,s=20){if(!i||0===i.trim().length)return[];try{return((await this.callSpotifyPlusWS(t,"search_tracks",e,{criteria:i.trim(),limit:Math.min(s,10),limit_total:s}))?.result?.items||[]).map(t=>({id:t.id||t.uri,name:t.name||"Titre inconnu",uri:t.uri,duration_ms:t.duration_ms||0,artists:(t.artists||[]).map(t=>({id:t.id,name:t.name,uri:t.uri})),album:t.album?{id:t.album.id,name:t.album.name,uri:t.album.uri,images:t.album.images||[]}:void 0,is_playable:t.is_playable??!0}))}catch(a){return console.error("[BetterSpotifyCard] Erreur searchTracks:",a),[]}}static async playContext(t,e,i,s=0,a,r){try{const o={entity_id:e,context_uri:i,offset_position:s};return r&&(o.offset_uri=r),a&&(o.device_id=a),void(await t.callService("spotifyplus","player_media_play_context",o))}catch(T){await t.callService("media_player","play_media",{entity_id:e,media_content_type:"playlist",media_content_id:i})}}static async playTracks(t,e,i,s){if(i&&0!==i.length)try{const a={entity_id:e,uris:i.slice(0,50).join(","),position_ms:0};return s&&(a.device_id=s),void(await t.callService("spotifyplus","player_media_play_tracks",a))}catch(T){await t.callService("media_player","play_media",{entity_id:e,media_content_type:"music",media_content_id:i[0]})}}static async playAllLiked(t,e,i){try{const s={entity_id:e,limit_total:500};i&&(s.device_id=i),await t.callService("spotifyplus","player_media_play_track_favorites",s)}catch(s){console.warn("[BetterSpotifyCard] player_media_play_track_favorites failed:",s)}}static async playLikedTracks(t,e,i,s=0,a){if(i&&i.length>0){const r=i.slice(s,s+50).map(t=>t.uri);await this.playTracks(t,e,r,a)}else await this.playAllLiked(t,e,a)}static async togglePlayPause(t,e){await t.callService("media_player","media_play_pause",{entity_id:e})}static async skipNext(t,e){try{await t.callService("spotifyplus","player_media_skip_next",{entity_id:e})}catch(T){await t.callService("media_player","media_next_track",{entity_id:e})}}static async skipPrevious(t,e){try{await t.callService("spotifyplus","player_media_skip_previous",{entity_id:e})}catch(T){await t.callService("media_player","media_previous_track",{entity_id:e})}}static async setVolume(t,e,i){const s=Math.max(0,Math.min(100,i))/100;await t.callService("media_player","volume_set",{entity_id:e,volume_level:s})}static async seek(t,e,i){await t.callService("media_player","media_seek",{entity_id:e,seek_position:i})}static async setShuffle(t,e,i){try{await t.callService("spotifyplus","player_set_shuffle_mode",{entity_id:e,state:i})}catch(T){await t.callService("media_player","shuffle_set",{entity_id:e,shuffle:i})}}static async toggleShuffle(t,e){const i=t.states[e],s=Boolean(i?.attributes?.shuffle);await this.setShuffle(t,e,!s)}},mt=r`
+/**
+ * @license
+ * Copyright 2019 Google LLC
+ * SPDX-License-Identifier: BSD-3-Clause
+ */
+var _a;
+const t$2 = globalThis, e$2 = t$2.ShadowRoot && (void 0 === t$2.ShadyCSS || t$2.ShadyCSS.nativeShadow) && "adoptedStyleSheets" in Document.prototype && "replace" in CSSStyleSheet.prototype, s$2 = Symbol(), o$4 = /* @__PURE__ */ new WeakMap();
+let n$3 = class n {
+  constructor(t2, e2, o2) {
+    if (this._$cssResult$ = true, o2 !== s$2) throw Error("CSSResult is not constructable. Use `unsafeCSS` or `css` instead.");
+    this.cssText = t2, this.t = e2;
+  }
+  get styleSheet() {
+    let t2 = this.o;
+    const s2 = this.t;
+    if (e$2 && void 0 === t2) {
+      const e2 = void 0 !== s2 && 1 === s2.length;
+      e2 && (t2 = o$4.get(s2)), void 0 === t2 && ((this.o = t2 = new CSSStyleSheet()).replaceSync(this.cssText), e2 && o$4.set(s2, t2));
+    }
+    return t2;
+  }
+  toString() {
+    return this.cssText;
+  }
+};
+const r$4 = (t2) => new n$3("string" == typeof t2 ? t2 : t2 + "", void 0, s$2), i$3 = (t2, ...e2) => {
+  const o2 = 1 === t2.length ? t2[0] : e2.reduce((e3, s2, o3) => e3 + ((t3) => {
+    if (true === t3._$cssResult$) return t3.cssText;
+    if ("number" == typeof t3) return t3;
+    throw Error("Value passed to 'css' function must be a 'css' function result: " + t3 + ". Use 'unsafeCSS' to pass non-literal values, but take care to ensure page security.");
+  })(s2) + t2[o3 + 1], t2[0]);
+  return new n$3(o2, t2, s$2);
+}, S$1 = (s2, o2) => {
+  if (e$2) s2.adoptedStyleSheets = o2.map((t2) => t2 instanceof CSSStyleSheet ? t2 : t2.styleSheet);
+  else for (const e2 of o2) {
+    const o3 = document.createElement("style"), n3 = t$2.litNonce;
+    void 0 !== n3 && o3.setAttribute("nonce", n3), o3.textContent = e2.cssText, s2.appendChild(o3);
+  }
+}, c$2 = e$2 ? (t2) => t2 : (t2) => t2 instanceof CSSStyleSheet ? ((t3) => {
+  let e2 = "";
+  for (const s2 of t3.cssRules) e2 += s2.cssText;
+  return r$4(e2);
+})(t2) : t2;
+/**
+ * @license
+ * Copyright 2017 Google LLC
+ * SPDX-License-Identifier: BSD-3-Clause
+ */
+const { is: i$2, defineProperty: e$1, getOwnPropertyDescriptor: h$1, getOwnPropertyNames: r$3, getOwnPropertySymbols: o$3, getPrototypeOf: n$2 } = Object, a$1 = globalThis, c$1 = a$1.trustedTypes, l$1 = c$1 ? c$1.emptyScript : "", p$1 = a$1.reactiveElementPolyfillSupport, d$1 = (t2, s2) => t2, u$1 = { toAttribute(t2, s2) {
+  switch (s2) {
+    case Boolean:
+      t2 = t2 ? l$1 : null;
+      break;
+    case Object:
+    case Array:
+      t2 = null == t2 ? t2 : JSON.stringify(t2);
+  }
+  return t2;
+}, fromAttribute(t2, s2) {
+  let i2 = t2;
+  switch (s2) {
+    case Boolean:
+      i2 = null !== t2;
+      break;
+    case Number:
+      i2 = null === t2 ? null : Number(t2);
+      break;
+    case Object:
+    case Array:
+      try {
+        i2 = JSON.parse(t2);
+      } catch (t3) {
+        i2 = null;
+      }
+  }
+  return i2;
+} }, f$1 = (t2, s2) => !i$2(t2, s2), b$1 = { attribute: true, type: String, converter: u$1, reflect: false, useDefault: false, hasChanged: f$1 };
+Symbol.metadata ?? (Symbol.metadata = Symbol("metadata")), a$1.litPropertyMetadata ?? (a$1.litPropertyMetadata = /* @__PURE__ */ new WeakMap());
+let y$1 = class y extends HTMLElement {
+  static addInitializer(t2) {
+    this._$Ei(), (this.l ?? (this.l = [])).push(t2);
+  }
+  static get observedAttributes() {
+    return this.finalize(), this._$Eh && [...this._$Eh.keys()];
+  }
+  static createProperty(t2, s2 = b$1) {
+    if (s2.state && (s2.attribute = false), this._$Ei(), this.prototype.hasOwnProperty(t2) && ((s2 = Object.create(s2)).wrapped = true), this.elementProperties.set(t2, s2), !s2.noAccessor) {
+      const i2 = Symbol(), h2 = this.getPropertyDescriptor(t2, i2, s2);
+      void 0 !== h2 && e$1(this.prototype, t2, h2);
+    }
+  }
+  static getPropertyDescriptor(t2, s2, i2) {
+    const { get: e2, set: r2 } = h$1(this.prototype, t2) ?? { get() {
+      return this[s2];
+    }, set(t3) {
+      this[s2] = t3;
+    } };
+    return { get: e2, set(s3) {
+      const h2 = e2 == null ? void 0 : e2.call(this);
+      r2 == null ? void 0 : r2.call(this, s3), this.requestUpdate(t2, h2, i2);
+    }, configurable: true, enumerable: true };
+  }
+  static getPropertyOptions(t2) {
+    return this.elementProperties.get(t2) ?? b$1;
+  }
+  static _$Ei() {
+    if (this.hasOwnProperty(d$1("elementProperties"))) return;
+    const t2 = n$2(this);
+    t2.finalize(), void 0 !== t2.l && (this.l = [...t2.l]), this.elementProperties = new Map(t2.elementProperties);
+  }
+  static finalize() {
+    if (this.hasOwnProperty(d$1("finalized"))) return;
+    if (this.finalized = true, this._$Ei(), this.hasOwnProperty(d$1("properties"))) {
+      const t3 = this.properties, s2 = [...r$3(t3), ...o$3(t3)];
+      for (const i2 of s2) this.createProperty(i2, t3[i2]);
+    }
+    const t2 = this[Symbol.metadata];
+    if (null !== t2) {
+      const s2 = litPropertyMetadata.get(t2);
+      if (void 0 !== s2) for (const [t3, i2] of s2) this.elementProperties.set(t3, i2);
+    }
+    this._$Eh = /* @__PURE__ */ new Map();
+    for (const [t3, s2] of this.elementProperties) {
+      const i2 = this._$Eu(t3, s2);
+      void 0 !== i2 && this._$Eh.set(i2, t3);
+    }
+    this.elementStyles = this.finalizeStyles(this.styles);
+  }
+  static finalizeStyles(s2) {
+    const i2 = [];
+    if (Array.isArray(s2)) {
+      const e2 = new Set(s2.flat(1 / 0).reverse());
+      for (const s3 of e2) i2.unshift(c$2(s3));
+    } else void 0 !== s2 && i2.push(c$2(s2));
+    return i2;
+  }
+  static _$Eu(t2, s2) {
+    const i2 = s2.attribute;
+    return false === i2 ? void 0 : "string" == typeof i2 ? i2 : "string" == typeof t2 ? t2.toLowerCase() : void 0;
+  }
+  constructor() {
+    super(), this._$Ep = void 0, this.isUpdatePending = false, this.hasUpdated = false, this._$Em = null, this._$Ev();
+  }
+  _$Ev() {
+    var _a2;
+    this._$ES = new Promise((t2) => this.enableUpdating = t2), this._$AL = /* @__PURE__ */ new Map(), this._$E_(), this.requestUpdate(), (_a2 = this.constructor.l) == null ? void 0 : _a2.forEach((t2) => t2(this));
+  }
+  addController(t2) {
+    var _a2;
+    (this._$EO ?? (this._$EO = /* @__PURE__ */ new Set())).add(t2), void 0 !== this.renderRoot && this.isConnected && ((_a2 = t2.hostConnected) == null ? void 0 : _a2.call(t2));
+  }
+  removeController(t2) {
+    var _a2;
+    (_a2 = this._$EO) == null ? void 0 : _a2.delete(t2);
+  }
+  _$E_() {
+    const t2 = /* @__PURE__ */ new Map(), s2 = this.constructor.elementProperties;
+    for (const i2 of s2.keys()) this.hasOwnProperty(i2) && (t2.set(i2, this[i2]), delete this[i2]);
+    t2.size > 0 && (this._$Ep = t2);
+  }
+  createRenderRoot() {
+    const t2 = this.shadowRoot ?? this.attachShadow(this.constructor.shadowRootOptions);
+    return S$1(t2, this.constructor.elementStyles), t2;
+  }
+  connectedCallback() {
+    var _a2;
+    this.renderRoot ?? (this.renderRoot = this.createRenderRoot()), this.enableUpdating(true), (_a2 = this._$EO) == null ? void 0 : _a2.forEach((t2) => {
+      var _a3;
+      return (_a3 = t2.hostConnected) == null ? void 0 : _a3.call(t2);
+    });
+  }
+  enableUpdating(t2) {
+  }
+  disconnectedCallback() {
+    var _a2;
+    (_a2 = this._$EO) == null ? void 0 : _a2.forEach((t2) => {
+      var _a3;
+      return (_a3 = t2.hostDisconnected) == null ? void 0 : _a3.call(t2);
+    });
+  }
+  attributeChangedCallback(t2, s2, i2) {
+    this._$AK(t2, i2);
+  }
+  _$ET(t2, s2) {
+    var _a2;
+    const i2 = this.constructor.elementProperties.get(t2), e2 = this.constructor._$Eu(t2, i2);
+    if (void 0 !== e2 && true === i2.reflect) {
+      const h2 = (void 0 !== ((_a2 = i2.converter) == null ? void 0 : _a2.toAttribute) ? i2.converter : u$1).toAttribute(s2, i2.type);
+      this._$Em = t2, null == h2 ? this.removeAttribute(e2) : this.setAttribute(e2, h2), this._$Em = null;
+    }
+  }
+  _$AK(t2, s2) {
+    var _a2, _b;
+    const i2 = this.constructor, e2 = i2._$Eh.get(t2);
+    if (void 0 !== e2 && this._$Em !== e2) {
+      const t3 = i2.getPropertyOptions(e2), h2 = "function" == typeof t3.converter ? { fromAttribute: t3.converter } : void 0 !== ((_a2 = t3.converter) == null ? void 0 : _a2.fromAttribute) ? t3.converter : u$1;
+      this._$Em = e2;
+      const r2 = h2.fromAttribute(s2, t3.type);
+      this[e2] = r2 ?? ((_b = this._$Ej) == null ? void 0 : _b.get(e2)) ?? r2, this._$Em = null;
+    }
+  }
+  requestUpdate(t2, s2, i2, e2 = false, h2) {
+    var _a2;
+    if (void 0 !== t2) {
+      const r2 = this.constructor;
+      if (false === e2 && (h2 = this[t2]), i2 ?? (i2 = r2.getPropertyOptions(t2)), !((i2.hasChanged ?? f$1)(h2, s2) || i2.useDefault && i2.reflect && h2 === ((_a2 = this._$Ej) == null ? void 0 : _a2.get(t2)) && !this.hasAttribute(r2._$Eu(t2, i2)))) return;
+      this.C(t2, s2, i2);
+    }
+    false === this.isUpdatePending && (this._$ES = this._$EP());
+  }
+  C(t2, s2, { useDefault: i2, reflect: e2, wrapped: h2 }, r2) {
+    i2 && !(this._$Ej ?? (this._$Ej = /* @__PURE__ */ new Map())).has(t2) && (this._$Ej.set(t2, r2 ?? s2 ?? this[t2]), true !== h2 || void 0 !== r2) || (this._$AL.has(t2) || (this.hasUpdated || i2 || (s2 = void 0), this._$AL.set(t2, s2)), true === e2 && this._$Em !== t2 && (this._$Eq ?? (this._$Eq = /* @__PURE__ */ new Set())).add(t2));
+  }
+  async _$EP() {
+    this.isUpdatePending = true;
+    try {
+      await this._$ES;
+    } catch (t3) {
+      Promise.reject(t3);
+    }
+    const t2 = this.scheduleUpdate();
+    return null != t2 && await t2, !this.isUpdatePending;
+  }
+  scheduleUpdate() {
+    return this.performUpdate();
+  }
+  performUpdate() {
+    var _a2;
+    if (!this.isUpdatePending) return;
+    if (!this.hasUpdated) {
+      if (this.renderRoot ?? (this.renderRoot = this.createRenderRoot()), this._$Ep) {
+        for (const [t4, s3] of this._$Ep) this[t4] = s3;
+        this._$Ep = void 0;
+      }
+      const t3 = this.constructor.elementProperties;
+      if (t3.size > 0) for (const [s3, i2] of t3) {
+        const { wrapped: t4 } = i2, e2 = this[s3];
+        true !== t4 || this._$AL.has(s3) || void 0 === e2 || this.C(s3, void 0, i2, e2);
+      }
+    }
+    let t2 = false;
+    const s2 = this._$AL;
+    try {
+      t2 = this.shouldUpdate(s2), t2 ? (this.willUpdate(s2), (_a2 = this._$EO) == null ? void 0 : _a2.forEach((t3) => {
+        var _a3;
+        return (_a3 = t3.hostUpdate) == null ? void 0 : _a3.call(t3);
+      }), this.update(s2)) : this._$EM();
+    } catch (s3) {
+      throw t2 = false, this._$EM(), s3;
+    }
+    t2 && this._$AE(s2);
+  }
+  willUpdate(t2) {
+  }
+  _$AE(t2) {
+    var _a2;
+    (_a2 = this._$EO) == null ? void 0 : _a2.forEach((t3) => {
+      var _a3;
+      return (_a3 = t3.hostUpdated) == null ? void 0 : _a3.call(t3);
+    }), this.hasUpdated || (this.hasUpdated = true, this.firstUpdated(t2)), this.updated(t2);
+  }
+  _$EM() {
+    this._$AL = /* @__PURE__ */ new Map(), this.isUpdatePending = false;
+  }
+  get updateComplete() {
+    return this.getUpdateComplete();
+  }
+  getUpdateComplete() {
+    return this._$ES;
+  }
+  shouldUpdate(t2) {
+    return true;
+  }
+  update(t2) {
+    this._$Eq && (this._$Eq = this._$Eq.forEach((t3) => this._$ET(t3, this[t3]))), this._$EM();
+  }
+  updated(t2) {
+  }
+  firstUpdated(t2) {
+  }
+};
+y$1.elementStyles = [], y$1.shadowRootOptions = { mode: "open" }, y$1[d$1("elementProperties")] = /* @__PURE__ */ new Map(), y$1[d$1("finalized")] = /* @__PURE__ */ new Map(), p$1 == null ? void 0 : p$1({ ReactiveElement: y$1 }), (a$1.reactiveElementVersions ?? (a$1.reactiveElementVersions = [])).push("2.1.2");
+/**
+ * @license
+ * Copyright 2017 Google LLC
+ * SPDX-License-Identifier: BSD-3-Clause
+ */
+const t$1 = globalThis, i$1 = (t2) => t2, s$1 = t$1.trustedTypes, e = s$1 ? s$1.createPolicy("lit-html", { createHTML: (t2) => t2 }) : void 0, h = "$lit$", o$2 = `lit$${Math.random().toFixed(9).slice(2)}$`, n$1 = "?" + o$2, r$2 = `<${n$1}>`, l = document, c = () => l.createComment(""), a = (t2) => null === t2 || "object" != typeof t2 && "function" != typeof t2, u = Array.isArray, d = (t2) => u(t2) || "function" == typeof (t2 == null ? void 0 : t2[Symbol.iterator]), f = "[ 	\n\f\r]", v = /<(?:(!--|\/[^a-zA-Z])|(\/?[a-zA-Z][^>\s]*)|(\/?$))/g, _ = /-->/g, m = />/g, p = RegExp(`>|${f}(?:([^\\s"'>=/]+)(${f}*=${f}*(?:[^ 	
+\f\r"'\`<>=]|("|')|))|$)`, "g"), g = /'/g, $ = /"/g, y2 = /^(?:script|style|textarea|title)$/i, x = (t2) => (i2, ...s2) => ({ _$litType$: t2, strings: i2, values: s2 }), b = x(1), w = x(2), E = Symbol.for("lit-noChange"), A = Symbol.for("lit-nothing"), C = /* @__PURE__ */ new WeakMap(), P = l.createTreeWalker(l, 129);
+function V(t2, i2) {
+  if (!u(t2) || !t2.hasOwnProperty("raw")) throw Error("invalid template strings array");
+  return void 0 !== e ? e.createHTML(i2) : i2;
+}
+const N = (t2, i2) => {
+  const s2 = t2.length - 1, e2 = [];
+  let n3, l2 = 2 === i2 ? "<svg>" : 3 === i2 ? "<math>" : "", c2 = v;
+  for (let i3 = 0; i3 < s2; i3++) {
+    const s3 = t2[i3];
+    let a2, u2, d2 = -1, f2 = 0;
+    for (; f2 < s3.length && (c2.lastIndex = f2, u2 = c2.exec(s3), null !== u2); ) f2 = c2.lastIndex, c2 === v ? "!--" === u2[1] ? c2 = _ : void 0 !== u2[1] ? c2 = m : void 0 !== u2[2] ? (y2.test(u2[2]) && (n3 = RegExp("</" + u2[2], "g")), c2 = p) : void 0 !== u2[3] && (c2 = p) : c2 === p ? ">" === u2[0] ? (c2 = n3 ?? v, d2 = -1) : void 0 === u2[1] ? d2 = -2 : (d2 = c2.lastIndex - u2[2].length, a2 = u2[1], c2 = void 0 === u2[3] ? p : '"' === u2[3] ? $ : g) : c2 === $ || c2 === g ? c2 = p : c2 === _ || c2 === m ? c2 = v : (c2 = p, n3 = void 0);
+    const x2 = c2 === p && t2[i3 + 1].startsWith("/>") ? " " : "";
+    l2 += c2 === v ? s3 + r$2 : d2 >= 0 ? (e2.push(a2), s3.slice(0, d2) + h + s3.slice(d2) + o$2 + x2) : s3 + o$2 + (-2 === d2 ? i3 : x2);
+  }
+  return [V(t2, l2 + (t2[s2] || "<?>") + (2 === i2 ? "</svg>" : 3 === i2 ? "</math>" : "")), e2];
+};
+class S {
+  constructor({ strings: t2, _$litType$: i2 }, e2) {
+    let r2;
+    this.parts = [];
+    let l2 = 0, a2 = 0;
+    const u2 = t2.length - 1, d2 = this.parts, [f2, v2] = N(t2, i2);
+    if (this.el = S.createElement(f2, e2), P.currentNode = this.el.content, 2 === i2 || 3 === i2) {
+      const t3 = this.el.content.firstChild;
+      t3.replaceWith(...t3.childNodes);
+    }
+    for (; null !== (r2 = P.nextNode()) && d2.length < u2; ) {
+      if (1 === r2.nodeType) {
+        if (r2.hasAttributes()) for (const t3 of r2.getAttributeNames()) if (t3.endsWith(h)) {
+          const i3 = v2[a2++], s2 = r2.getAttribute(t3).split(o$2), e3 = /([.?@])?(.*)/.exec(i3);
+          d2.push({ type: 1, index: l2, name: e3[2], strings: s2, ctor: "." === e3[1] ? I : "?" === e3[1] ? L : "@" === e3[1] ? z : H }), r2.removeAttribute(t3);
+        } else t3.startsWith(o$2) && (d2.push({ type: 6, index: l2 }), r2.removeAttribute(t3));
+        if (y2.test(r2.tagName)) {
+          const t3 = r2.textContent.split(o$2), i3 = t3.length - 1;
+          if (i3 > 0) {
+            r2.textContent = s$1 ? s$1.emptyScript : "";
+            for (let s2 = 0; s2 < i3; s2++) r2.append(t3[s2], c()), P.nextNode(), d2.push({ type: 2, index: ++l2 });
+            r2.append(t3[i3], c());
+          }
+        }
+      } else if (8 === r2.nodeType) if (r2.data === n$1) d2.push({ type: 2, index: l2 });
+      else {
+        let t3 = -1;
+        for (; -1 !== (t3 = r2.data.indexOf(o$2, t3 + 1)); ) d2.push({ type: 7, index: l2 }), t3 += o$2.length - 1;
+      }
+      l2++;
+    }
+  }
+  static createElement(t2, i2) {
+    const s2 = l.createElement("template");
+    return s2.innerHTML = t2, s2;
+  }
+}
+function M(t2, i2, s2 = t2, e2) {
+  var _a2, _b;
+  if (i2 === E) return i2;
+  let h2 = void 0 !== e2 ? (_a2 = s2._$Co) == null ? void 0 : _a2[e2] : s2._$Cl;
+  const o2 = a(i2) ? void 0 : i2._$litDirective$;
+  return (h2 == null ? void 0 : h2.constructor) !== o2 && ((_b = h2 == null ? void 0 : h2._$AO) == null ? void 0 : _b.call(h2, false), void 0 === o2 ? h2 = void 0 : (h2 = new o2(t2), h2._$AT(t2, s2, e2)), void 0 !== e2 ? (s2._$Co ?? (s2._$Co = []))[e2] = h2 : s2._$Cl = h2), void 0 !== h2 && (i2 = M(t2, h2._$AS(t2, i2.values), h2, e2)), i2;
+}
+class R {
+  constructor(t2, i2) {
+    this._$AV = [], this._$AN = void 0, this._$AD = t2, this._$AM = i2;
+  }
+  get parentNode() {
+    return this._$AM.parentNode;
+  }
+  get _$AU() {
+    return this._$AM._$AU;
+  }
+  u(t2) {
+    const { el: { content: i2 }, parts: s2 } = this._$AD, e2 = ((t2 == null ? void 0 : t2.creationScope) ?? l).importNode(i2, true);
+    P.currentNode = e2;
+    let h2 = P.nextNode(), o2 = 0, n3 = 0, r2 = s2[0];
+    for (; void 0 !== r2; ) {
+      if (o2 === r2.index) {
+        let i3;
+        2 === r2.type ? i3 = new k(h2, h2.nextSibling, this, t2) : 1 === r2.type ? i3 = new r2.ctor(h2, r2.name, r2.strings, this, t2) : 6 === r2.type && (i3 = new Z(h2, this, t2)), this._$AV.push(i3), r2 = s2[++n3];
+      }
+      o2 !== (r2 == null ? void 0 : r2.index) && (h2 = P.nextNode(), o2++);
+    }
+    return P.currentNode = l, e2;
+  }
+  p(t2) {
+    let i2 = 0;
+    for (const s2 of this._$AV) void 0 !== s2 && (void 0 !== s2.strings ? (s2._$AI(t2, s2, i2), i2 += s2.strings.length - 2) : s2._$AI(t2[i2])), i2++;
+  }
+}
+class k {
+  get _$AU() {
+    var _a2;
+    return ((_a2 = this._$AM) == null ? void 0 : _a2._$AU) ?? this._$Cv;
+  }
+  constructor(t2, i2, s2, e2) {
+    this.type = 2, this._$AH = A, this._$AN = void 0, this._$AA = t2, this._$AB = i2, this._$AM = s2, this.options = e2, this._$Cv = (e2 == null ? void 0 : e2.isConnected) ?? true;
+  }
+  get parentNode() {
+    let t2 = this._$AA.parentNode;
+    const i2 = this._$AM;
+    return void 0 !== i2 && 11 === (t2 == null ? void 0 : t2.nodeType) && (t2 = i2.parentNode), t2;
+  }
+  get startNode() {
+    return this._$AA;
+  }
+  get endNode() {
+    return this._$AB;
+  }
+  _$AI(t2, i2 = this) {
+    t2 = M(this, t2, i2), a(t2) ? t2 === A || null == t2 || "" === t2 ? (this._$AH !== A && this._$AR(), this._$AH = A) : t2 !== this._$AH && t2 !== E && this._(t2) : void 0 !== t2._$litType$ ? this.$(t2) : void 0 !== t2.nodeType ? this.T(t2) : d(t2) ? this.k(t2) : this._(t2);
+  }
+  O(t2) {
+    return this._$AA.parentNode.insertBefore(t2, this._$AB);
+  }
+  T(t2) {
+    this._$AH !== t2 && (this._$AR(), this._$AH = this.O(t2));
+  }
+  _(t2) {
+    this._$AH !== A && a(this._$AH) ? this._$AA.nextSibling.data = t2 : this.T(l.createTextNode(t2)), this._$AH = t2;
+  }
+  $(t2) {
+    var _a2;
+    const { values: i2, _$litType$: s2 } = t2, e2 = "number" == typeof s2 ? this._$AC(t2) : (void 0 === s2.el && (s2.el = S.createElement(V(s2.h, s2.h[0]), this.options)), s2);
+    if (((_a2 = this._$AH) == null ? void 0 : _a2._$AD) === e2) this._$AH.p(i2);
+    else {
+      const t3 = new R(e2, this), s3 = t3.u(this.options);
+      t3.p(i2), this.T(s3), this._$AH = t3;
+    }
+  }
+  _$AC(t2) {
+    let i2 = C.get(t2.strings);
+    return void 0 === i2 && C.set(t2.strings, i2 = new S(t2)), i2;
+  }
+  k(t2) {
+    u(this._$AH) || (this._$AH = [], this._$AR());
+    const i2 = this._$AH;
+    let s2, e2 = 0;
+    for (const h2 of t2) e2 === i2.length ? i2.push(s2 = new k(this.O(c()), this.O(c()), this, this.options)) : s2 = i2[e2], s2._$AI(h2), e2++;
+    e2 < i2.length && (this._$AR(s2 && s2._$AB.nextSibling, e2), i2.length = e2);
+  }
+  _$AR(t2 = this._$AA.nextSibling, s2) {
+    var _a2;
+    for ((_a2 = this._$AP) == null ? void 0 : _a2.call(this, false, true, s2); t2 !== this._$AB; ) {
+      const s3 = i$1(t2).nextSibling;
+      i$1(t2).remove(), t2 = s3;
+    }
+  }
+  setConnected(t2) {
+    var _a2;
+    void 0 === this._$AM && (this._$Cv = t2, (_a2 = this._$AP) == null ? void 0 : _a2.call(this, t2));
+  }
+}
+class H {
+  get tagName() {
+    return this.element.tagName;
+  }
+  get _$AU() {
+    return this._$AM._$AU;
+  }
+  constructor(t2, i2, s2, e2, h2) {
+    this.type = 1, this._$AH = A, this._$AN = void 0, this.element = t2, this.name = i2, this._$AM = e2, this.options = h2, s2.length > 2 || "" !== s2[0] || "" !== s2[1] ? (this._$AH = Array(s2.length - 1).fill(new String()), this.strings = s2) : this._$AH = A;
+  }
+  _$AI(t2, i2 = this, s2, e2) {
+    const h2 = this.strings;
+    let o2 = false;
+    if (void 0 === h2) t2 = M(this, t2, i2, 0), o2 = !a(t2) || t2 !== this._$AH && t2 !== E, o2 && (this._$AH = t2);
+    else {
+      const e3 = t2;
+      let n3, r2;
+      for (t2 = h2[0], n3 = 0; n3 < h2.length - 1; n3++) r2 = M(this, e3[s2 + n3], i2, n3), r2 === E && (r2 = this._$AH[n3]), o2 || (o2 = !a(r2) || r2 !== this._$AH[n3]), r2 === A ? t2 = A : t2 !== A && (t2 += (r2 ?? "") + h2[n3 + 1]), this._$AH[n3] = r2;
+    }
+    o2 && !e2 && this.j(t2);
+  }
+  j(t2) {
+    t2 === A ? this.element.removeAttribute(this.name) : this.element.setAttribute(this.name, t2 ?? "");
+  }
+}
+class I extends H {
+  constructor() {
+    super(...arguments), this.type = 3;
+  }
+  j(t2) {
+    this.element[this.name] = t2 === A ? void 0 : t2;
+  }
+}
+class L extends H {
+  constructor() {
+    super(...arguments), this.type = 4;
+  }
+  j(t2) {
+    this.element.toggleAttribute(this.name, !!t2 && t2 !== A);
+  }
+}
+class z extends H {
+  constructor(t2, i2, s2, e2, h2) {
+    super(t2, i2, s2, e2, h2), this.type = 5;
+  }
+  _$AI(t2, i2 = this) {
+    if ((t2 = M(this, t2, i2, 0) ?? A) === E) return;
+    const s2 = this._$AH, e2 = t2 === A && s2 !== A || t2.capture !== s2.capture || t2.once !== s2.once || t2.passive !== s2.passive, h2 = t2 !== A && (s2 === A || e2);
+    e2 && this.element.removeEventListener(this.name, this, s2), h2 && this.element.addEventListener(this.name, this, t2), this._$AH = t2;
+  }
+  handleEvent(t2) {
+    var _a2;
+    "function" == typeof this._$AH ? this._$AH.call(((_a2 = this.options) == null ? void 0 : _a2.host) ?? this.element, t2) : this._$AH.handleEvent(t2);
+  }
+}
+class Z {
+  constructor(t2, i2, s2) {
+    this.element = t2, this.type = 6, this._$AN = void 0, this._$AM = i2, this.options = s2;
+  }
+  get _$AU() {
+    return this._$AM._$AU;
+  }
+  _$AI(t2) {
+    M(this, t2);
+  }
+}
+const B = t$1.litHtmlPolyfillSupport;
+B == null ? void 0 : B(S, k), (t$1.litHtmlVersions ?? (t$1.litHtmlVersions = [])).push("3.3.3");
+const D = (t2, i2, s2) => {
+  const e2 = (s2 == null ? void 0 : s2.renderBefore) ?? i2;
+  let h2 = e2._$litPart$;
+  if (void 0 === h2) {
+    const t3 = (s2 == null ? void 0 : s2.renderBefore) ?? null;
+    e2._$litPart$ = h2 = new k(i2.insertBefore(c(), t3), t3, void 0, s2 ?? {});
+  }
+  return h2._$AI(t2), h2;
+};
+/**
+ * @license
+ * Copyright 2017 Google LLC
+ * SPDX-License-Identifier: BSD-3-Clause
+ */
+const s = globalThis;
+class i extends y$1 {
+  constructor() {
+    super(...arguments), this.renderOptions = { host: this }, this._$Do = void 0;
+  }
+  createRenderRoot() {
+    var _a2;
+    const t2 = super.createRenderRoot();
+    return (_a2 = this.renderOptions).renderBefore ?? (_a2.renderBefore = t2.firstChild), t2;
+  }
+  update(t2) {
+    const r2 = this.render();
+    this.hasUpdated || (this.renderOptions.isConnected = this.isConnected), super.update(t2), this._$Do = D(r2, this.renderRoot, this.renderOptions);
+  }
+  connectedCallback() {
+    var _a2;
+    super.connectedCallback(), (_a2 = this._$Do) == null ? void 0 : _a2.setConnected(true);
+  }
+  disconnectedCallback() {
+    var _a2;
+    super.disconnectedCallback(), (_a2 = this._$Do) == null ? void 0 : _a2.setConnected(false);
+  }
+  render() {
+    return E;
+  }
+}
+i._$litElement$ = true, i["finalized"] = true, (_a = s.litElementHydrateSupport) == null ? void 0 : _a.call(s, { LitElement: i });
+const o$1 = s.litElementPolyfillSupport;
+o$1 == null ? void 0 : o$1({ LitElement: i });
+(s.litElementVersions ?? (s.litElementVersions = [])).push("4.2.2");
+/**
+ * @license
+ * Copyright 2017 Google LLC
+ * SPDX-License-Identifier: BSD-3-Clause
+ */
+const t = (t2) => (e2, o2) => {
+  void 0 !== o2 ? o2.addInitializer(() => {
+    customElements.define(t2, e2);
+  }) : customElements.define(t2, e2);
+};
+/**
+ * @license
+ * Copyright 2017 Google LLC
+ * SPDX-License-Identifier: BSD-3-Clause
+ */
+const o = { attribute: true, type: String, converter: u$1, reflect: false, hasChanged: f$1 }, r$1 = (t2 = o, e2, r2) => {
+  const { kind: n3, metadata: i2 } = r2;
+  let s2 = globalThis.litPropertyMetadata.get(i2);
+  if (void 0 === s2 && globalThis.litPropertyMetadata.set(i2, s2 = /* @__PURE__ */ new Map()), "setter" === n3 && ((t2 = Object.create(t2)).wrapped = true), s2.set(r2.name, t2), "accessor" === n3) {
+    const { name: o2 } = r2;
+    return { set(r3) {
+      const n4 = e2.get.call(this);
+      e2.set.call(this, r3), this.requestUpdate(o2, n4, t2, true, r3);
+    }, init(e3) {
+      return void 0 !== e3 && this.C(o2, void 0, t2, e3), e3;
+    } };
+  }
+  if ("setter" === n3) {
+    const { name: o2 } = r2;
+    return function(r3) {
+      const n4 = this[o2];
+      e2.call(this, r3), this.requestUpdate(o2, n4, t2, true, r3);
+    };
+  }
+  throw Error("Unsupported decorator location: " + n3);
+};
+function n2(t2) {
+  return (e2, o2) => "object" == typeof o2 ? r$1(t2, e2, o2) : ((t3, e3, o3) => {
+    const r2 = e3.hasOwnProperty(o3);
+    return e3.constructor.createProperty(o3, t3), r2 ? Object.getOwnPropertyDescriptor(e3, o3) : void 0;
+  })(t2, e2, o2);
+}
+/**
+ * @license
+ * Copyright 2017 Google LLC
+ * SPDX-License-Identifier: BSD-3-Clause
+ */
+function r(r2) {
+  return n2({ ...r2, state: true, attribute: false });
+}
+class SpotifyService {
+  /**
+   * Request SpotifyPlus / Home Assistant to refresh playback state from Spotify Web API
+   */
+  static async refreshPlaybackState(hass, entityId) {
+    try {
+      await hass.callService("spotifyplus", "trigger_scan_interval", {
+        entity_id: entityId
+      });
+    } catch (e2) {
+      try {
+        await hass.callService("homeassistant", "update_entity", {
+          entity_id: entityId
+        });
+      } catch (err) {
+      }
+    }
+  }
+  /**
+   * Helper to call a SpotifyPlus query service with response data via Home Assistant WebSocket
+   */
+  static async callSpotifyPlusWS(hass, service, entityId, serviceData = {}) {
+    try {
+      const response = await hass.callWS({
+        type: "call_service",
+        domain: "spotifyplus",
+        service,
+        service_data: {
+          entity_id: entityId,
+          ...serviceData
+        },
+        return_response: true
+      });
+      return response == null ? void 0 : response.response;
+    } catch (err) {
+      console.warn(`[BetterSpotifyCard] spotifyplus.${service} call failed:`, err);
+      throw err;
+    }
+  }
+  /**
+   * Get available Spotify Connect devices
+   */
+  static async getConnectDevices(hass, entityId) {
+    var _a2, _b;
+    try {
+      const res = await this.callSpotifyPlusWS(hass, "get_spotify_connect_devices", entityId, {
+        refresh: true
+      });
+      const rawDevices = ((_a2 = res == null ? void 0 : res.result) == null ? void 0 : _a2.devices) || (res == null ? void 0 : res.result) || [];
+      if (Array.isArray(rawDevices)) {
+        return rawDevices.map((d2) => ({
+          id: d2.id || d2.device_id || d2.name,
+          name: d2.name || "Appareil Spotify",
+          type: d2.type || "Speaker",
+          is_active: Boolean(d2.is_active),
+          is_private_session: d2.is_private_session,
+          is_restricted: d2.is_restricted,
+          volume_percent: d2.volume_percent,
+          supports_volume: d2.supports_volume
+        }));
+      }
+    } catch (e2) {
+      console.warn("[BetterSpotifyCard] Falling back to entity source_list for connect devices");
+    }
+    const entity = hass.states[entityId];
+    if ((_b = entity == null ? void 0 : entity.attributes) == null ? void 0 : _b.source_list) {
+      const currentSource = entity.attributes.source;
+      return entity.attributes.source_list.map((name) => ({
+        id: name,
+        name,
+        type: "Speaker",
+        is_active: name === currentSource
+      }));
+    }
+    return [];
+  }
+  /**
+   * Transfer playback to a Spotify Connect device
+   */
+  static async transferPlayback(hass, entityId, deviceId) {
+    try {
+      await hass.callService("spotifyplus", "player_transfer_playback", {
+        entity_id: entityId,
+        device_id: deviceId,
+        play: true
+      });
+      return;
+    } catch (e2) {
+      await hass.callService("media_player", "select_source", {
+        entity_id: entityId,
+        source: deviceId
+      });
+    }
+  }
+  /**
+   * Get user playlist favorites
+   */
+  static async getPlaylists(hass, entityId, limit = 200) {
+    var _a2;
+    try {
+      const res = await this.callSpotifyPlusWS(hass, "get_playlist_favorites", entityId, {
+        limit: 50,
+        limit_total: limit,
+        sort_result: true
+      });
+      const items = ((_a2 = res == null ? void 0 : res.result) == null ? void 0 : _a2.items) || [];
+      return items.map((p2) => {
+        var _a3, _b;
+        return {
+          id: p2.id || p2.uri,
+          name: p2.name || "Sans titre",
+          uri: p2.uri,
+          description: p2.description,
+          images: p2.images || [],
+          tracks_total: (_a3 = p2.tracks) == null ? void 0 : _a3.total,
+          owner_name: (_b = p2.owner) == null ? void 0 : _b.display_name
+        };
+      });
+    } catch (err) {
+      console.error("[BetterSpotifyCard] Erreur getPlaylists:", err);
+      return [];
+    }
+  }
+  /**
+   * Get paginated items (tracks) for a specific playlist
+   */
+  static async getPlaylistTracks(hass, entityId, playlistIdOrUri, limit = 50, offset = 0) {
+    var _a2, _b;
+    try {
+      const playlistId = playlistIdOrUri.replace("spotify:playlist:", "").trim();
+      const res = await this.callSpotifyPlusWS(hass, "get_playlist_items", entityId, {
+        playlist_id: playlistId,
+        limit: Math.min(limit, 50),
+        offset
+      });
+      const rawItems = ((_a2 = res == null ? void 0 : res.result) == null ? void 0 : _a2.items) || [];
+      const total = ((_b = res == null ? void 0 : res.result) == null ? void 0 : _b.total) ?? rawItems.length;
+      const items = rawItems.map((item) => {
+        const t2 = item.track || item.item || item;
+        if (!t2 || !t2.name) return null;
+        return {
+          id: t2.id || t2.uri,
+          name: t2.name || "Titre inconnu",
+          uri: t2.uri,
+          duration_ms: t2.duration_ms || 0,
+          artists: (t2.artists || []).map((a2) => ({
+            id: a2.id || "",
+            name: typeof a2 === "string" ? a2 : a2.name || "Artiste inconnu",
+            uri: a2.uri || ""
+          })),
+          album: t2.album ? {
+            id: t2.album.id || "",
+            name: t2.album.name || "",
+            uri: t2.album.uri || "",
+            images: t2.album.images || []
+          } : void 0,
+          is_playable: t2.is_playable ?? true
+        };
+      }).filter((t2) => t2 !== null);
+      return {
+        items,
+        total,
+        offset,
+        limit
+      };
+    } catch (err) {
+      console.error("[BetterSpotifyCard] Erreur getPlaylistTracks:", err);
+      return { items: [], total: 0, offset, limit };
+    }
+  }
+  /**
+   * Get paginated user track favorites (Liked Songs)
+   */
+  static async getLikedTracks(hass, entityId, limit = 50, offset = 0) {
+    var _a2, _b;
+    try {
+      const res = await this.callSpotifyPlusWS(hass, "get_track_favorites", entityId, {
+        limit: Math.min(limit, 50),
+        offset,
+        sort_result: false
+      });
+      const rawItems = ((_a2 = res == null ? void 0 : res.result) == null ? void 0 : _a2.items) || [];
+      const total = ((_b = res == null ? void 0 : res.result) == null ? void 0 : _b.total) ?? rawItems.length;
+      const items = rawItems.map((item) => {
+        const t2 = item.track || item.item || item;
+        return {
+          id: t2.id || t2.uri,
+          name: t2.name || "Titre inconnu",
+          uri: t2.uri,
+          duration_ms: t2.duration_ms || 0,
+          artists: (t2.artists || []).map((a2) => ({
+            id: a2.id || "",
+            name: typeof a2 === "string" ? a2 : a2.name || "Artiste inconnu",
+            uri: a2.uri || ""
+          })),
+          album: t2.album ? {
+            id: t2.album.id || "",
+            name: t2.album.name || "",
+            uri: t2.album.uri || "",
+            images: t2.album.images || []
+          } : void 0,
+          is_playable: t2.is_playable ?? true
+        };
+      });
+      return {
+        items,
+        total,
+        offset,
+        limit
+      };
+    } catch (err) {
+      console.error("[BetterSpotifyCard] Erreur getLikedTracks:", err);
+      return { items: [], total: 0, offset, limit };
+    }
+  }
+  /**
+   * Search tracks in Spotify catalog
+   */
+  static async searchTracks(hass, entityId, criteria, limit = 20) {
+    var _a2;
+    if (!criteria || criteria.trim().length === 0) return [];
+    try {
+      const res = await this.callSpotifyPlusWS(hass, "search_tracks", entityId, {
+        criteria: criteria.trim(),
+        limit: Math.min(limit, 10),
+        limit_total: limit
+      });
+      const items = ((_a2 = res == null ? void 0 : res.result) == null ? void 0 : _a2.items) || [];
+      return items.map((t2) => ({
+        id: t2.id || t2.uri,
+        name: t2.name || "Titre inconnu",
+        uri: t2.uri,
+        duration_ms: t2.duration_ms || 0,
+        artists: (t2.artists || []).map((a2) => ({ id: a2.id, name: a2.name, uri: a2.uri })),
+        album: t2.album ? {
+          id: t2.album.id,
+          name: t2.album.name,
+          uri: t2.album.uri,
+          images: t2.album.images || []
+        } : void 0,
+        is_playable: t2.is_playable ?? true
+      }));
+    } catch (err) {
+      console.error("[BetterSpotifyCard] Erreur searchTracks:", err);
+      return [];
+    }
+  }
+  /**
+   * Start playing a context (playlist, album, etc.) at an optional offset index or track URI
+   */
+  static async playContext(hass, entityId, contextUri, offsetPosition = 0, deviceId, offsetUri) {
+    try {
+      const serviceData = {
+        entity_id: entityId,
+        context_uri: contextUri,
+        offset_position: offsetPosition
+      };
+      if (offsetUri) {
+        serviceData.offset_uri = offsetUri;
+      }
+      if (deviceId) {
+        serviceData.device_id = deviceId;
+      }
+      await hass.callService("spotifyplus", "player_media_play_context", serviceData);
+      return;
+    } catch (e2) {
+      await hass.callService("media_player", "play_media", {
+        entity_id: entityId,
+        media_content_type: "playlist",
+        media_content_id: contextUri
+      });
+    }
+  }
+  /**
+   * Start playing a list of tracks (queues the next tracks)
+   */
+  static async playTracks(hass, entityId, uris, deviceId) {
+    if (!uris || uris.length === 0) return;
+    try {
+      const uriList = uris.slice(0, 50).join(",");
+      const serviceData = {
+        entity_id: entityId,
+        uris: uriList,
+        position_ms: 0
+      };
+      if (deviceId) {
+        serviceData.device_id = deviceId;
+      }
+      await hass.callService("spotifyplus", "player_media_play_tracks", serviceData);
+      return;
+    } catch (e2) {
+      await hass.callService("media_player", "play_media", {
+        entity_id: entityId,
+        media_content_type: "music",
+        media_content_id: uris[0]
+      });
+    }
+  }
+  /**
+   * Play all liked tracks (favorites) using native SpotifyPlus endpoint
+   */
+  static async playAllLiked(hass, entityId, deviceId) {
+    try {
+      const serviceData = {
+        entity_id: entityId,
+        limit_total: 500
+      };
+      if (deviceId) {
+        serviceData.device_id = deviceId;
+      }
+      await hass.callService("spotifyplus", "player_media_play_track_favorites", serviceData);
+    } catch (err) {
+      console.warn("[BetterSpotifyCard] player_media_play_track_favorites failed:", err);
+    }
+  }
+  /**
+   * Play liked tracks starting from a specific clicked track index
+   */
+  static async playLikedTracks(hass, entityId, allLikedTracks, startIndex = 0, deviceId) {
+    if (allLikedTracks && allLikedTracks.length > 0) {
+      const sliced = allLikedTracks.slice(startIndex, startIndex + 50);
+      const uris = sliced.map((t2) => t2.uri);
+      await this.playTracks(hass, entityId, uris, deviceId);
+    } else {
+      await this.playAllLiked(hass, entityId, deviceId);
+    }
+  }
+  /**
+   * Standard playback controls
+   */
+  static async togglePlayPause(hass, entityId) {
+    await hass.callService("media_player", "media_play_pause", { entity_id: entityId });
+  }
+  static async skipNext(hass, entityId) {
+    try {
+      await hass.callService("spotifyplus", "player_media_skip_next", { entity_id: entityId });
+    } catch (e2) {
+      await hass.callService("media_player", "media_next_track", { entity_id: entityId });
+    }
+  }
+  static async skipPrevious(hass, entityId) {
+    try {
+      await hass.callService("spotifyplus", "player_media_skip_previous", { entity_id: entityId });
+    } catch (e2) {
+      await hass.callService("media_player", "media_previous_track", { entity_id: entityId });
+    }
+  }
+  static async setVolume(hass, entityId, volumePercent) {
+    const fraction = Math.max(0, Math.min(100, volumePercent)) / 100;
+    await hass.callService("media_player", "volume_set", {
+      entity_id: entityId,
+      volume_level: fraction
+    });
+  }
+  static async seek(hass, entityId, positionSeconds) {
+    await hass.callService("media_player", "media_seek", {
+      entity_id: entityId,
+      seek_position: positionSeconds
+    });
+  }
+  /**
+   * Set shuffle mode
+   */
+  static async setShuffle(hass, entityId, shuffle) {
+    try {
+      await hass.callService("spotifyplus", "player_set_shuffle_mode", {
+        entity_id: entityId,
+        state: shuffle
+      });
+    } catch (e2) {
+      await hass.callService("media_player", "shuffle_set", {
+        entity_id: entityId,
+        shuffle
+      });
+    }
+  }
+  /**
+   * Toggle shuffle mode
+   */
+  static async toggleShuffle(hass, entityId) {
+    var _a2;
+    const entity = hass.states[entityId];
+    const currentShuffle = Boolean((_a2 = entity == null ? void 0 : entity.attributes) == null ? void 0 : _a2.shuffle);
+    await this.setShuffle(hass, entityId, !currentShuffle);
+  }
+}
+const cardStyles = i$3`
   :host {
     --bsc-bg: var(--ha-card-background, #121212);
     --bsc-surface: #181818;
@@ -1245,249 +2233,1017 @@ var t=globalThis,e=t.ShadowRoot&&(void 0===t.ShadyCSS||t.ShadyCSS.nativeShadow)&
     justify-content: center;
     padding: 16px 0 8px 0;
   }
-`,bt={spotify:W`
+`;
+const icons = {
+  spotify: w`
     <svg viewBox="0 0 24 24">
       <path d="M12 2C6.477 2 2 6.477 2 12c0 5.524 4.477 10 10 10s10-4.476 10-10c0-5.523-4.477-10-10-10zm4.586 14.424c-.18.295-.563.387-.857.207-2.35-1.435-5.308-1.76-8.793-.963-.335.077-.67-.133-.746-.468-.077-.334.132-.67.467-.746 3.808-.87 7.076-.503 9.722 1.113.294.18.386.563.207.857zm1.225-2.723c-.226.367-.708.482-1.075.257-2.69-1.653-6.79-2.132-9.97-1.166-.413.125-.85-.11-.974-.522-.125-.413.11-.85.522-.975 3.632-1.103 8.147-.568 11.24 1.332.367.225.482.707.257 1.074zm.105-2.835C14.692 8.95 9.375 8.775 6.297 9.71c-.494.15-1.016-.13-1.166-.624-.15-.494.13-1.016.624-1.166 3.532-1.072 9.404-.866 13.115 1.338.445.264.59.838.327 1.282-.264.444-.838.59-1.281.326z"/>
     </svg>
-  `,play:W`
+  `,
+  play: w`
     <svg viewBox="0 0 24 24">
       <path d="M8 5.14v13.72a1 1 0 0 0 1.5.86l11-6.86a1 1 0 0 0 0-1.72l-11-6.86A1 1 0 0 0 8 5.14z"/>
     </svg>
-  `,pause:W`
+  `,
+  pause: w`
     <svg viewBox="0 0 24 24">
       <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>
     </svg>
-  `,skipNext:W`
+  `,
+  skipNext: w`
     <svg viewBox="0 0 24 24">
       <path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z"/>
     </svg>
-  `,skipPrevious:W`
+  `,
+  skipPrevious: w`
     <svg viewBox="0 0 24 24">
       <path d="M6 6h2v12H6zm3.5 6l8.5 6V6z"/>
     </svg>
-  `,speaker:W`
+  `,
+  speaker: w`
     <svg viewBox="0 0 24 24">
       <path d="M17 2H7c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h10c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-5 2c1.1 0 2 .9 2 2s-.9 2-2 2-2-.9-2-2 .9-2 2-2zm0 16c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/>
     </svg>
-  `,connectDevices:W`
+  `,
+  connectDevices: w`
     <svg viewBox="0 0 24 24">
       <path d="M18 10.01L18 4c0-1.1-.9-2-2-2H4c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h4v2h8v-2h4c1.1 0 2-.9 2-2v-3.99zM4 14V4h12v10H4zm18 4H10v-2h12v2z"/>
     </svg>
-  `,search:W`
+  `,
+  search: w`
     <svg viewBox="0 0 24 24">
       <path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
     </svg>
-  `,heart:W`
+  `,
+  heart: w`
     <svg viewBox="0 0 24 24">
       <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
     </svg>
-  `,playlist:W`
+  `,
+  playlist: w`
     <svg viewBox="0 0 24 24">
       <path d="M15 6H3v2h12V6zm0 4H3v2h12v-2zM3 16h8v-2H3v2zM17 6v8.18c-.31-.11-.65-.18-1-.18-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3V8h3V6h-5z"/>
     </svg>
-  `,volumeLow:W`
+  `,
+  volumeLow: w`
     <svg viewBox="0 0 24 24">
       <path d="M18.5 12c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM5 9v6h4l5 5V4L9 9H5z"/>
     </svg>
-  `,volumeHigh:W`
+  `,
+  volumeHigh: w`
     <svg viewBox="0 0 24 24">
       <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/>
     </svg>
-  `,volumeMinus:W`
+  `,
+  volumeMinus: w`
     <svg viewBox="0 0 24 24">
       <path d="M18.5 12c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM5 9v6h4l5 5V4L9 9H5zm10 2h6v2h-6v-2z"/>
     </svg>
-  `,volumePlus:W`
+  `,
+  volumePlus: w`
     <svg viewBox="0 0 24 24">
       <path d="M3 9v6h4l5 5V4L7 9H3zm11 2h2V9h2v2h2v2h-2v2h-2v-2h-2v-2zm-1.5-3.03V5.9c2.89.86 5 3.54 5 6.1h-2c0-1.77-1.02-3.29-2.5-4.03z"/>
     </svg>
-  `,close:W`
+  `,
+  close: w`
     <svg viewBox="0 0 24 24">
       <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
     </svg>
-  `,clear:W`
+  `,
+  clear: w`
     <svg viewBox="0 0 24 24">
       <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
     </svg>
-  `,musicNote:W`
+  `,
+  musicNote: w`
     <svg viewBox="0 0 24 24">
       <path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/>
     </svg>
-  `,shuffle:W`
+  `,
+  shuffle: w`
     <svg viewBox="0 0 24 24">
       <path d="M10.59 9.17L5.41 4 4 5.41l5.17 5.17 1.42-1.41zM14.5 4l2.04 2.04L4 18.59 5.41 20 17.96 7.46 20 9.5V4h-5.5zm.33 9.41l-1.41 1.41 3.13 3.13L14.5 20H20v-5.5l-2.04 2.04-3.13-3.13z"/>
     </svg>
-  `,arrowBack:W`
+  `,
+  arrowBack: w`
     <svg viewBox="0 0 24 24">
       <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/>
     </svg>
-  `,chevronRight:W`
+  `,
+  chevronRight: w`
     <svg viewBox="0 0 24 24">
       <path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/>
     </svg>
-  `};function gt(t){if(!t||isNaN(t)||t<0)return"0:00";const e=Math.floor(t/1e3),i=e%60;return`${Math.floor(e/60)}:${i<10?"0":""}${i}`}function ft(t){if(!t||isNaN(t)||t<0)return"0:00";const e=Math.floor(t/60),i=Math.floor(t%60);return`${e}:${i<10?"0":""}${i}`}function yt(t,e,i,s){var a,r=arguments.length,o=r<3?e:null===s?s=Object.getOwnPropertyDescriptor(e,i):s;if("object"==typeof Reflect&&"function"==typeof Reflect.decorate)o=Reflect.decorate(t,e,i,s);else for(var n=t.length-1;n>=0;n--)(a=t[n])&&(o=(r<3?a(o):r>3?a(e,i,o):a(e,i))||o);return r>3&&o&&Object.defineProperty(e,i,o),o}var xt=[{name:"entity",required:!0,selector:{entity:{filter:{domain:"media_player"}}}},{name:"default_tab",selector:{select:{mode:"dropdown",options:[{value:"liked",label:"Titres likés"},{value:"playlists",label:"Playlists"},{value:"search",label:"Recherche"},{value:"devices",label:"Appareils"}]}}}],kt=class extends lt{constructor(...t){super(...t),this._computeLabel=t=>{switch(t.name){case"entity":return"Lecteur Spotify (Entité media_player)";case"default_tab":return"Onglet affiché par défaut";default:return t.name}},this._computeHelper=t=>{switch(t.name){case"entity":return"Sélectionnez le compte Spotify ou SpotifyPlus à contrôler";case"default_tab":return"Onglet affiché lors de l’ouverture de la popup";default:return""}}}setConfig(t){this._config={...t}}_valueChanged(t){if(!this._config)return;const e=t.detail.value,i={...this._config,...e};this._config=i,this.dispatchEvent(new CustomEvent("config-changed",{detail:{config:i},bubbles:!0,composed:!0}))}render(){return this.hass&&this._config?customElements.get("ha-form")?j`
+  `
+};
+function formatDuration(ms) {
+  if (!ms || isNaN(ms) || ms < 0) return "0:00";
+  const totalSeconds = Math.floor(ms / 1e3);
+  const minutes = Math.floor(totalSeconds / 60);
+  const seconds = totalSeconds % 60;
+  return `${minutes}:${seconds < 10 ? "0" : ""}${seconds}`;
+}
+function formatSeconds(seconds) {
+  if (!seconds || isNaN(seconds) || seconds < 0) return "0:00";
+  const mins = Math.floor(seconds / 60);
+  const secs = Math.floor(seconds % 60);
+  return `${mins}:${secs < 10 ? "0" : ""}${secs}`;
+}
+var __defProp$1 = Object.defineProperty;
+var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
+var __decorateClass$1 = (decorators, target, key, kind) => {
+  var result = kind > 1 ? void 0 : kind ? __getOwnPropDesc(target, key) : target;
+  for (var i2 = decorators.length - 1, decorator; i2 >= 0; i2--)
+    if (decorator = decorators[i2])
+      result = (kind ? decorator(target, key, result) : decorator(result)) || result;
+  if (kind && result) __defProp$1(target, key, result);
+  return result;
+};
+const SCHEMA = [
+  {
+    name: "entity",
+    required: true,
+    selector: {
+      entity: {
+        filter: {
+          domain: "media_player"
+        }
+      }
+    }
+  },
+  {
+    name: "default_tab",
+    selector: {
+      select: {
+        mode: "dropdown",
+        options: [
+          { value: "liked", label: "Titres likés" },
+          { value: "playlists", label: "Playlists" },
+          { value: "search", label: "Recherche" },
+          { value: "devices", label: "Appareils" }
+        ]
+      }
+    }
+  }
+];
+const loadHaForm = async () => {
+  if (customElements.get("ha-form")) {
+    return;
+  }
+  try {
+    const helpers = window.loadCardHelpers ? await window.loadCardHelpers() : null;
+    if (helpers) {
+      const card = await helpers.createCardElement({ type: "button" });
+      if (card && card.constructor.getConfigElement) {
+        await card.constructor.getConfigElement();
+      }
+    }
+  } catch (err) {
+  }
+  if (customElements.get("ha-form")) {
+    return;
+  }
+  const cardTypes = ["hui-entities-card", "hui-button-card", "hui-markdown-card"];
+  for (const cardType of cardTypes) {
+    const el = customElements.get(cardType);
+    if (el && el.getConfigElement) {
+      try {
+        await el.getConfigElement();
+        if (customElements.get("ha-form")) break;
+      } catch (e2) {
+      }
+    }
+  }
+};
+let BetterSpotifyCardEditor = class extends i {
+  constructor() {
+    super(...arguments);
+    this._computeLabel = (schema) => {
+      switch (schema.name) {
+        case "entity":
+          return "Lecteur Spotify (Entité media_player)";
+        case "default_tab":
+          return "Onglet affiché par défaut";
+        default:
+          return schema.name;
+      }
+    };
+    this._computeHelper = (schema) => {
+      switch (schema.name) {
+        case "entity":
+          return "Sélectionnez le compte Spotify ou SpotifyPlus à contrôler";
+        case "default_tab":
+          return "Onglet affiché lors de l’ouverture de la popup";
+        default:
+          return "";
+      }
+    };
+  }
+  setConfig(config) {
+    this._config = { ...config };
+  }
+  _valueChanged(ev) {
+    if (!this._config) return;
+    const value = ev.detail.value;
+    const newConfig = {
+      ...this._config,
+      ...value
+    };
+    this._config = newConfig;
+    this.dispatchEvent(
+      new CustomEvent("config-changed", {
+        detail: { config: newConfig },
+        bubbles: true,
+        composed: true
+      })
+    );
+  }
+  render() {
+    if (!this.hass || !this._config) {
+      return b``;
+    }
+    if (customElements.get("ha-form")) {
+      return b`
         <div class="card-config">
           <ha-form
             .hass=${this.hass}
             .data=${this._config}
-            .schema=${xt}
+            .schema=${SCHEMA}
             .computeLabel=${this._computeLabel}
             .computeHelper=${this._computeHelper}
             @value-changed=${this._valueChanged}
           ></ha-form>
         </div>
-      `:j`
+      `;
+    }
+    return b`
       <div class="card-config">
         <ha-entity-picker
           .hass=${this.hass}
-          .value=${this._config.entity||""}
+          .value=${this._config.entity || ""}
           .includeDomains=${["media_player"]}
           label="Lecteur Spotify (Requis)"
           allow-custom-entity
-          @value-changed=${t=>{this._valueChanged({detail:{value:{...this._config,entity:t.detail.value}}})}}
+          @value-changed=${(ev) => {
+      this._valueChanged({
+        detail: { value: { ...this._config, entity: ev.detail.value } }
+      });
+    }}
         ></ha-entity-picker>
       </div>
-    `:j``}static{this.styles=r`
+    `;
+  }
+};
+BetterSpotifyCardEditor.styles = i$3`
     .card-config {
       display: flex;
       flex-direction: column;
       gap: 16px;
       padding: 8px 0;
     }
-  `}};yt([pt({attribute:!1})],kt.prototype,"hass",void 0),yt([ut()],kt.prototype,"_config",void 0),kt=yt([(t=>(e,i)=>{void 0!==i?i.addInitializer(()=>{customElements.define(t,e)}):customElements.define(t,e)})("better-spotify-card-editor")],kt);var $t=class extends lt{constructor(...t){super(...t),this.popupOpen=!1,this.activeTab="liked",this.playlists=[],this.likedTracks=[],this.likedTotal=0,this.likedOffset=0,this.loadingMoreLiked=!1,this.searchResults=[],this.devices=[],this.selectedPlaylist=null,this.playlistTracks=[],this.playlistTotal=0,this.playlistOffset=0,this.loadingPlaylistTracks=!1,this.loadingMorePlaylistTracks=!1,this.loadingPlaylists=!1,this.loadingLiked=!1,this.loadingSearch=!1,this.loadingDevices=!1,this.searchQuery="",this.currentPosition=0,this.volumeMenuOpen=!1,this.localVolume=null,this.initialRefreshDone=!1}static{this.styles=mt}setConfig(t){if(!t)throw new Error("Configuration invalide");this.config={default_tab:"liked",...t},this.config.default_tab&&(this.activeTab=this.config.default_tab)}getCardSize(){return 2}static async getConfigElement(){return await(async()=>{if(!customElements.get("ha-form")){try{const t=window.loadCardHelpers?await window.loadCardHelpers():null;if(t){const e=await t.createCardElement({type:"button"});e&&e.constructor.getConfigElement&&await e.constructor.getConfigElement()}}catch(t){}if(!customElements.get("ha-form"))for(const t of["hui-entities-card","hui-button-card","hui-markdown-card"]){const e=customElements.get(t);if(e&&e.getConfigElement)try{if(await e.getConfigElement(),customElements.get("ha-form"))break}catch(T){}}}})(),document.createElement("better-spotify-card-editor")}static getStubConfig(t,e,i){let s="";if(t?.states){const e=Object.keys(t.states),i=e.find(e=>{if(!e.startsWith("media_player."))return!1;const i=t.states[e]?.attributes?.platform||"";return e.includes("spotify")||"spotifyplus"===i||"spotify"===i});if(i)s=i;else{const t=e.find(t=>t.startsWith("media_player."));t&&(s=t)}}return{entity:s,default_tab:"liked"}}connectedCallback(){super.connectedCallback(),this.boundKeydownHandler=t=>{"Escape"===t.key&&(this.volumeMenuOpen?this.volumeMenuOpen=!1:this.popupOpen&&this.closePopup())},window.addEventListener("keydown",this.boundKeydownHandler),this.startPositionTicker(),this.startPlaybackRefresh()}disconnectedCallback(){super.disconnectedCallback(),this.boundKeydownHandler&&window.removeEventListener("keydown",this.boundKeydownHandler),this.volumeDebounceTimer&&(clearTimeout(this.volumeDebounceTimer),this.volumeDebounceTimer=void 0),this.stopPositionTicker(),this.stopPlaybackRefresh()}startPlaybackRefresh(){this.stopPlaybackRefresh(),this.hass&&this.config?.entity&&this.hass.states[this.config.entity]&&vt.refreshPlaybackState(this.hass,this.config.entity),this.refreshStateInterval=window.setInterval(()=>{this.hass&&this.config?.entity&&this.hass.states[this.config.entity]&&vt.refreshPlaybackState(this.hass,this.config.entity)},15e3)}stopPlaybackRefresh(){this.refreshStateInterval&&(clearInterval(this.refreshStateInterval),this.refreshStateInterval=void 0)}updated(t){super.updated(t),t.has("hass")&&this.hass&&this.config?.entity&&!this.initialRefreshDone&&(this.initialRefreshDone=!0,this.startPlaybackRefresh()),(t.has("popupOpen")||t.has("activeTab"))&&this.popupOpen&&this.loadCurrentTabData()}startPositionTicker(){this.stopPositionTicker(),this.positionTickerInterval=window.setInterval(()=>{this.updateTrackPosition()},1e3)}stopPositionTicker(){this.positionTickerInterval&&(clearInterval(this.positionTickerInterval),this.positionTickerInterval=void 0)}updateTrackPosition(){if(!this.hass||!this.config?.entity)return;const t=this.hass.states[this.config.entity];if(!t||"playing"!==t.state)return void(void 0!==t?.attributes?.media_position&&(this.currentPosition=t.attributes.media_position));const e=t.attributes.media_position??0,i=t.attributes.media_position_updated_at;if(i){const t=(Date.now()-new Date(i).getTime())/1e3;this.currentPosition=Math.max(0,e+t)}else this.currentPosition=e}openPopup(t){t&&(this.activeTab=t),this.popupOpen=!0,this.loadCurrentTabData(),this.fetchDevices(),this.hass&&this.config?.entity&&vt.refreshPlaybackState(this.hass,this.config.entity)}closePopup(){this.popupOpen=!1}setTab(t){this.activeTab!==t&&(this.selectedPlaylist=null),this.activeTab=t,this.loadCurrentTabData()}loadCurrentTabData(){if(this.hass&&this.config?.entity)switch(this.activeTab){case"liked":0===this.likedTracks.length&&this.fetchLikedTracks();break;case"playlists":0===this.playlists.length&&this.fetchPlaylists();break;case"devices":this.fetchDevices()}}getDefaultDevice(){return this.config.default_device||localStorage.getItem("better_spotify_default_device")||void 0}setDefaultDevice(t){this.getDefaultDevice()===t?localStorage.removeItem("better_spotify_default_device"):localStorage.setItem("better_spotify_default_device",t),this.requestUpdate()}getTargetDeviceId(){if(this.hass&&this.config?.entity&&!this.hass.states[this.config.entity]?.attributes?.source)return this.getDefaultDevice()||this.devices[0]?.id||this.devices[0]?.name}async fetchLikedTracks(){if(!this.loadingLiked){this.loadingLiked=!0;try{this.likedTracks=[],this.likedOffset=0,this.likedTotal=0;const t=await vt.getLikedTracks(this.hass,this.config.entity,50,0);this.likedTracks=t.items,this.likedTotal=t.total,this.likedOffset=t.items.length}catch(T){console.error(T)}finally{this.loadingLiked=!1}}}async loadMoreLikedTracks(){if(!(this.loadingMoreLiked||this.likedTracks.length>=this.likedTotal)){this.loadingMoreLiked=!0;try{const t=await vt.getLikedTracks(this.hass,this.config.entity,50,this.likedOffset);this.likedTracks=[...this.likedTracks,...t.items],this.likedOffset+=t.items.length,this.likedTotal=t.total}catch(T){console.error(T)}finally{this.loadingMoreLiked=!1}}}async fetchPlaylists(){if(!this.loadingPlaylists){this.loadingPlaylists=!0;try{this.playlists=await vt.getPlaylists(this.hass,this.config.entity,200)}catch(T){console.error(T)}finally{this.loadingPlaylists=!1}}}async fetchDevices(){if(!this.loadingDevices){this.loadingDevices=!0;try{this.devices=await vt.getConnectDevices(this.hass,this.config.entity)}catch(T){console.error(T)}finally{this.loadingDevices=!1}}}handleSearchInput(t){const e=t.target;if(this.searchQuery=e.value,this.searchDebounceTimer&&clearTimeout(this.searchDebounceTimer),!this.searchQuery.trim())return this.searchResults=[],void(this.loadingSearch=!1);this.loadingSearch=!0,this.searchDebounceTimer=window.setTimeout(async()=>{try{this.searchResults=await vt.searchTracks(this.hass,this.config.entity,this.searchQuery,25)}catch(t){console.error(t)}finally{this.loadingSearch=!1}},350)}clearSearch(){this.searchQuery="",this.searchResults=[],this.loadingSearch=!1}async handlePlayPause(t){t?.stopPropagation(),await vt.togglePlayPause(this.hass,this.config.entity)}async handleNext(t){t?.stopPropagation(),await vt.skipNext(this.hass,this.config.entity)}async handlePrevious(t){t?.stopPropagation(),await vt.skipPrevious(this.hass,this.config.entity)}async handleSeek(t){const e=t.target,i=parseFloat(e.value);this.currentPosition=i,await vt.seek(this.hass,this.config.entity,i)}handleToggleVolumeMenu(t){t?.stopPropagation(),this.volumeMenuOpen=!this.volumeMenuOpen}handleVolumeInput(t){t.stopPropagation();const e=Number(t.target.value);this.localVolume=e,this.volumeDebounceTimer&&clearTimeout(this.volumeDebounceTimer),this.volumeDebounceTimer=window.setTimeout(()=>{this.hass&&this.config?.entity&&vt.setVolume(this.hass,this.config.entity,e)},120)}async handleVolumeChange(t){t.stopPropagation();const e=Number(t.target.value);this.localVolume=e,this.volumeDebounceTimer&&(clearTimeout(this.volumeDebounceTimer),this.volumeDebounceTimer=void 0),this.hass&&this.config?.entity&&await vt.setVolume(this.hass,this.config.entity,e),setTimeout(()=>{this.localVolume=null},1200)}async handleVolumeStep(t,e){if(e?.stopPropagation(),!this.hass||!this.config?.entity)return;const i=this.hass.states[this.config.entity];if(!i)return;const s=null!==this.localVolume?this.localVolume:Math.round(100*(i.attributes.volume_level??.5)),a=Math.max(0,Math.min(100,s+t));this.localVolume=a,await vt.setVolume(this.hass,this.config.entity,a),setTimeout(()=>{this.localVolume=null},1200)}async handleSelectDevice(t){await vt.transferPlayback(this.hass,this.config.entity,t.id),await this.fetchDevices()}async handleSelectPlaylist(t){this.selectedPlaylist=t,this.playlistTracks=[],this.playlistOffset=0,this.playlistTotal=0,this.loadingPlaylistTracks=!0;try{const e=await vt.getPlaylistTracks(this.hass,this.config.entity,t.id||t.uri,50,0);this.playlistTracks=e.items,this.playlistTotal=e.total,this.playlistOffset=e.items.length}catch(e){console.error(e)}finally{this.loadingPlaylistTracks=!1}}async loadMorePlaylistTracks(){if(!(!this.selectedPlaylist||this.loadingMorePlaylistTracks||this.playlistTracks.length>=this.playlistTotal)){this.loadingMorePlaylistTracks=!0;try{const t=await vt.getPlaylistTracks(this.hass,this.config.entity,this.selectedPlaylist.id||this.selectedPlaylist.uri,50,this.playlistOffset);this.playlistTracks=[...this.playlistTracks,...t.items],this.playlistOffset+=t.items.length,this.playlistTotal=t.total}catch(t){console.error(t)}finally{this.loadingMorePlaylistTracks=!1}}}handleBackToPlaylists(){this.selectedPlaylist=null,this.playlistTracks=[],this.playlistOffset=0,this.playlistTotal=0}handleContentScroll(t){const e=t.target;e&&e.scrollHeight-e.scrollTop-e.clientHeight<300&&("liked"===this.activeTab?this.loadMoreLikedTracks():"playlists"===this.activeTab&&this.selectedPlaylist&&this.loadMorePlaylistTracks())}async handlePlayAllLiked(t=!1){const e=this.getTargetDeviceId();t&&await vt.setShuffle(this.hass,this.config.entity,!0),await vt.playAllLiked(this.hass,this.config.entity,e)}async handlePlayAllPlaylist(t,e=!1){const i=this.getTargetDeviceId();e&&await vt.setShuffle(this.hass,this.config.entity,!0),await vt.playContext(this.hass,this.config.entity,t.uri,0,i)}async handlePlayPlaylistTrack(t,e){const i=this.getTargetDeviceId(),s=this.playlistTracks[e];await vt.playContext(this.hass,this.config.entity,t.uri,e,i,s?.uri)}async handleToggleShuffle(t){t?.stopPropagation(),await vt.toggleShuffle(this.hass,this.config.entity)}async handlePlayPlaylist(t){await this.handleSelectPlaylist(t)}async handlePlayLikedTrack(t){const e=this.getTargetDeviceId();await vt.playLikedTracks(this.hass,this.config.entity,this.likedTracks,t,e)}async handlePlaySearchTrack(t){const e=this.getTargetDeviceId(),i=this.searchResults.slice(t).map(t=>t.uri);await vt.playTracks(this.hass,this.config.entity,i,e)}render(){if(!this.hass||!this.config?.entity)return this.renderConfigPlaceholder();const t=this.hass.states[this.config.entity];return t?j`
-      ${this.renderMiniCard(t)}
-      ${this.popupOpen?this.renderBubblePopup(t):""}
-    `:this.renderConfigPlaceholder()}renderConfigPlaceholder(){const t=Boolean(this.config?.entity)?`Entité "${this.config.entity}" introuvable`:"Sélectionnez votre lecteur Spotify dans l’éditeur";return j`
+  `;
+__decorateClass$1([
+  n2({ attribute: false })
+], BetterSpotifyCardEditor.prototype, "hass", 2);
+__decorateClass$1([
+  r()
+], BetterSpotifyCardEditor.prototype, "_config", 2);
+BetterSpotifyCardEditor = __decorateClass$1([
+  t("better-spotify-card-editor")
+], BetterSpotifyCardEditor);
+var __defProp = Object.defineProperty;
+var __decorateClass = (decorators, target, key, kind) => {
+  var result = void 0;
+  for (var i2 = decorators.length - 1, decorator; i2 >= 0; i2--)
+    if (decorator = decorators[i2])
+      result = decorator(target, key, result) || result;
+  if (result) __defProp(target, key, result);
+  return result;
+};
+const _BetterSpotifyCard = class _BetterSpotifyCard extends i {
+  constructor() {
+    super(...arguments);
+    this.popupOpen = false;
+    this.activeTab = "liked";
+    this.playlists = [];
+    this.likedTracks = [];
+    this.likedTotal = 0;
+    this.likedOffset = 0;
+    this.loadingMoreLiked = false;
+    this.searchResults = [];
+    this.devices = [];
+    this.selectedPlaylist = null;
+    this.playlistTracks = [];
+    this.playlistTotal = 0;
+    this.playlistOffset = 0;
+    this.loadingPlaylistTracks = false;
+    this.loadingMorePlaylistTracks = false;
+    this.loadingPlaylists = false;
+    this.loadingLiked = false;
+    this.loadingSearch = false;
+    this.loadingDevices = false;
+    this.searchQuery = "";
+    this.currentPosition = 0;
+    this.volumeMenuOpen = false;
+    this.localVolume = null;
+    this.initialRefreshDone = false;
+  }
+  setConfig(config) {
+    if (!config) {
+      throw new Error("Configuration invalide");
+    }
+    this.config = {
+      default_tab: "liked",
+      ...config
+    };
+    if (this.config.default_tab) {
+      this.activeTab = this.config.default_tab;
+    }
+  }
+  getCardSize() {
+    return 2;
+  }
+  static async getConfigElement() {
+    await loadHaForm();
+    return document.createElement("better-spotify-card-editor");
+  }
+  static getStubConfig(hass, _entities, _entitiesFallback) {
+    let chosenEntity = "";
+    if (hass == null ? void 0 : hass.states) {
+      const stateKeys = Object.keys(hass.states);
+      const spotifyEntity = stateKeys.find((id) => {
+        var _a2;
+        if (!id.startsWith("media_player.")) return false;
+        const state2 = hass.states[id];
+        const platform = ((_a2 = state2 == null ? void 0 : state2.attributes) == null ? void 0 : _a2.platform) || "";
+        return id.includes("spotify") || platform === "spotifyplus" || platform === "spotify";
+      });
+      if (spotifyEntity) {
+        chosenEntity = spotifyEntity;
+      } else {
+        const anyMediaPlayer = stateKeys.find((id) => id.startsWith("media_player."));
+        if (anyMediaPlayer) {
+          chosenEntity = anyMediaPlayer;
+        }
+      }
+    }
+    return {
+      entity: chosenEntity,
+      default_tab: "liked"
+    };
+  }
+  connectedCallback() {
+    super.connectedCallback();
+    this.boundKeydownHandler = (e2) => {
+      if (e2.key === "Escape") {
+        if (this.volumeMenuOpen) {
+          this.closeVolumeMenu();
+        } else if (this.popupOpen) {
+          this.closePopup();
+        }
+      }
+    };
+    window.addEventListener("keydown", this.boundKeydownHandler);
+    this.startPositionTicker();
+    this.startPlaybackRefresh();
+  }
+  disconnectedCallback() {
+    super.disconnectedCallback();
+    if (this.boundKeydownHandler) {
+      window.removeEventListener("keydown", this.boundKeydownHandler);
+    }
+    if (this.volumeDebounceTimer) {
+      clearTimeout(this.volumeDebounceTimer);
+      this.volumeDebounceTimer = void 0;
+    }
+    this.closeVolumeMenu();
+    this.stopPositionTicker();
+    this.stopPlaybackRefresh();
+  }
+  startPlaybackRefresh() {
+    var _a2;
+    this.stopPlaybackRefresh();
+    if (this.hass && ((_a2 = this.config) == null ? void 0 : _a2.entity) && this.hass.states[this.config.entity]) {
+      SpotifyService.refreshPlaybackState(this.hass, this.config.entity);
+    }
+    this.refreshStateInterval = window.setInterval(() => {
+      var _a3;
+      if (this.hass && ((_a3 = this.config) == null ? void 0 : _a3.entity) && this.hass.states[this.config.entity]) {
+        SpotifyService.refreshPlaybackState(this.hass, this.config.entity);
+      }
+    }, 15e3);
+  }
+  stopPlaybackRefresh() {
+    if (this.refreshStateInterval) {
+      clearInterval(this.refreshStateInterval);
+      this.refreshStateInterval = void 0;
+    }
+  }
+  updated(changedProps) {
+    var _a2;
+    super.updated(changedProps);
+    if (changedProps.has("hass") && this.hass && ((_a2 = this.config) == null ? void 0 : _a2.entity) && !this.initialRefreshDone) {
+      this.initialRefreshDone = true;
+      this.startPlaybackRefresh();
+    }
+    if (changedProps.has("popupOpen") || changedProps.has("activeTab")) {
+      if (this.popupOpen) {
+        this.loadCurrentTabData();
+      }
+    }
+  }
+  startPositionTicker() {
+    this.stopPositionTicker();
+    this.positionTickerInterval = window.setInterval(() => {
+      this.updateTrackPosition();
+    }, 1e3);
+  }
+  stopPositionTicker() {
+    if (this.positionTickerInterval) {
+      clearInterval(this.positionTickerInterval);
+      this.positionTickerInterval = void 0;
+    }
+  }
+  updateTrackPosition() {
+    var _a2, _b;
+    if (!this.hass || !((_a2 = this.config) == null ? void 0 : _a2.entity)) return;
+    const entity = this.hass.states[this.config.entity];
+    if (!entity || entity.state !== "playing") {
+      if (((_b = entity == null ? void 0 : entity.attributes) == null ? void 0 : _b.media_position) !== void 0) {
+        this.currentPosition = entity.attributes.media_position;
+      }
+      return;
+    }
+    const pos = entity.attributes.media_position ?? 0;
+    const updatedAt = entity.attributes.media_position_updated_at;
+    if (updatedAt) {
+      const elapsed = (Date.now() - new Date(updatedAt).getTime()) / 1e3;
+      this.currentPosition = Math.max(0, pos + elapsed);
+    } else {
+      this.currentPosition = pos;
+    }
+  }
+  openPopup(initialTab) {
+    var _a2;
+    if (initialTab) {
+      this.activeTab = initialTab;
+    }
+    this.popupOpen = true;
+    this.loadCurrentTabData();
+    this.fetchDevices();
+    if (this.hass && ((_a2 = this.config) == null ? void 0 : _a2.entity)) {
+      SpotifyService.refreshPlaybackState(this.hass, this.config.entity);
+    }
+  }
+  closePopup() {
+    this.closeVolumeMenu();
+    this.popupOpen = false;
+  }
+  setTab(tab) {
+    if (this.activeTab !== tab) {
+      this.selectedPlaylist = null;
+    }
+    this.activeTab = tab;
+    this.loadCurrentTabData();
+  }
+  loadCurrentTabData() {
+    var _a2;
+    if (!this.hass || !((_a2 = this.config) == null ? void 0 : _a2.entity)) return;
+    switch (this.activeTab) {
+      case "liked":
+        if (this.likedTracks.length === 0) this.fetchLikedTracks();
+        break;
+      case "playlists":
+        if (this.playlists.length === 0) this.fetchPlaylists();
+        break;
+      case "devices":
+        this.fetchDevices();
+        break;
+    }
+  }
+  getDefaultDevice() {
+    return this.config.default_device || localStorage.getItem("better_spotify_default_device") || void 0;
+  }
+  setDefaultDevice(deviceId) {
+    const current = this.getDefaultDevice();
+    if (current === deviceId) {
+      localStorage.removeItem("better_spotify_default_device");
+    } else {
+      localStorage.setItem("better_spotify_default_device", deviceId);
+    }
+    this.requestUpdate();
+  }
+  getTargetDeviceId() {
+    var _a2, _b, _c, _d;
+    if (!this.hass || !((_a2 = this.config) == null ? void 0 : _a2.entity)) return void 0;
+    const entity = this.hass.states[this.config.entity];
+    if ((_b = entity == null ? void 0 : entity.attributes) == null ? void 0 : _b.source) return void 0;
+    return this.getDefaultDevice() || ((_c = this.devices[0]) == null ? void 0 : _c.id) || ((_d = this.devices[0]) == null ? void 0 : _d.name);
+  }
+  async fetchLikedTracks() {
+    if (this.loadingLiked) return;
+    this.loadingLiked = true;
+    try {
+      this.likedTracks = [];
+      this.likedOffset = 0;
+      this.likedTotal = 0;
+      const page = await SpotifyService.getLikedTracks(this.hass, this.config.entity, 50, 0);
+      this.likedTracks = page.items;
+      this.likedTotal = page.total;
+      this.likedOffset = page.items.length;
+    } catch (e2) {
+      console.error(e2);
+    } finally {
+      this.loadingLiked = false;
+    }
+  }
+  async loadMoreLikedTracks() {
+    if (this.loadingMoreLiked || this.likedTracks.length >= this.likedTotal) return;
+    this.loadingMoreLiked = true;
+    try {
+      const page = await SpotifyService.getLikedTracks(this.hass, this.config.entity, 50, this.likedOffset);
+      this.likedTracks = [...this.likedTracks, ...page.items];
+      this.likedOffset += page.items.length;
+      this.likedTotal = page.total;
+    } catch (e2) {
+      console.error(e2);
+    } finally {
+      this.loadingMoreLiked = false;
+    }
+  }
+  async fetchPlaylists() {
+    if (this.loadingPlaylists) return;
+    this.loadingPlaylists = true;
+    try {
+      this.playlists = await SpotifyService.getPlaylists(this.hass, this.config.entity, 200);
+    } catch (e2) {
+      console.error(e2);
+    } finally {
+      this.loadingPlaylists = false;
+    }
+  }
+  async fetchDevices() {
+    if (this.loadingDevices) return;
+    this.loadingDevices = true;
+    try {
+      this.devices = await SpotifyService.getConnectDevices(this.hass, this.config.entity);
+    } catch (e2) {
+      console.error(e2);
+    } finally {
+      this.loadingDevices = false;
+    }
+  }
+  handleSearchInput(e2) {
+    const input = e2.target;
+    this.searchQuery = input.value;
+    if (this.searchDebounceTimer) {
+      clearTimeout(this.searchDebounceTimer);
+    }
+    if (!this.searchQuery.trim()) {
+      this.searchResults = [];
+      this.loadingSearch = false;
+      return;
+    }
+    this.loadingSearch = true;
+    this.searchDebounceTimer = window.setTimeout(async () => {
+      try {
+        this.searchResults = await SpotifyService.searchTracks(
+          this.hass,
+          this.config.entity,
+          this.searchQuery,
+          25
+        );
+      } catch (err) {
+        console.error(err);
+      } finally {
+        this.loadingSearch = false;
+      }
+    }, 350);
+  }
+  clearSearch() {
+    this.searchQuery = "";
+    this.searchResults = [];
+    this.loadingSearch = false;
+  }
+  /* Actions */
+  async handlePlayPause(e2) {
+    e2 == null ? void 0 : e2.stopPropagation();
+    await SpotifyService.togglePlayPause(this.hass, this.config.entity);
+  }
+  async handleNext(e2) {
+    e2 == null ? void 0 : e2.stopPropagation();
+    await SpotifyService.skipNext(this.hass, this.config.entity);
+  }
+  async handlePrevious(e2) {
+    e2 == null ? void 0 : e2.stopPropagation();
+    await SpotifyService.skipPrevious(this.hass, this.config.entity);
+  }
+  async handleSeek(e2) {
+    const target = e2.target;
+    const newPos = parseFloat(target.value);
+    this.currentPosition = newPos;
+    await SpotifyService.seek(this.hass, this.config.entity, newPos);
+  }
+  handleToggleVolumeMenu(e2) {
+    e2 == null ? void 0 : e2.stopPropagation();
+    if (this.volumeMenuOpen) {
+      this.closeVolumeMenu();
+    } else {
+      this.openVolumeMenu();
+    }
+  }
+  openVolumeMenu() {
+    this.volumeMenuOpen = true;
+    this.resetVolumeInactivityTimer();
+    this.attachOutsideClickListener();
+  }
+  closeVolumeMenu() {
+    this.volumeMenuOpen = false;
+    this.clearVolumeInactivityTimer();
+    this.detachOutsideClickListener();
+  }
+  resetVolumeInactivityTimer() {
+    this.clearVolumeInactivityTimer();
+    this.volumeInactivityTimer = window.setTimeout(() => {
+      this.closeVolumeMenu();
+    }, 2e4);
+  }
+  clearVolumeInactivityTimer() {
+    if (this.volumeInactivityTimer) {
+      clearTimeout(this.volumeInactivityTimer);
+      this.volumeInactivityTimer = void 0;
+    }
+  }
+  attachOutsideClickListener() {
+    this.detachOutsideClickListener();
+    this.boundOutsideClickListener = (e2) => {
+      if (!this.volumeMenuOpen) return;
+      const path = e2.composedPath();
+      const isInside = path.some((el) => {
+        var _a2, _b;
+        if (!(el instanceof HTMLElement)) return false;
+        return ((_a2 = el.classList) == null ? void 0 : _a2.contains("volume-popover")) || ((_b = el.classList) == null ? void 0 : _b.contains("btn-vol-trigger"));
+      });
+      if (!isInside) {
+        this.closeVolumeMenu();
+      }
+    };
+    window.addEventListener("pointerdown", this.boundOutsideClickListener, { capture: true });
+  }
+  detachOutsideClickListener() {
+    if (this.boundOutsideClickListener) {
+      window.removeEventListener("pointerdown", this.boundOutsideClickListener, { capture: true });
+      this.boundOutsideClickListener = void 0;
+    }
+  }
+  handleVolumeInput(e2) {
+    e2.stopPropagation();
+    this.resetVolumeInactivityTimer();
+    const val = Number(e2.target.value);
+    this.localVolume = val;
+    if (this.volumeDebounceTimer) {
+      clearTimeout(this.volumeDebounceTimer);
+    }
+    this.volumeDebounceTimer = window.setTimeout(() => {
+      var _a2;
+      if (this.hass && ((_a2 = this.config) == null ? void 0 : _a2.entity)) {
+        SpotifyService.setVolume(this.hass, this.config.entity, val);
+      }
+    }, 120);
+  }
+  async handleVolumeChange(e2) {
+    var _a2;
+    e2.stopPropagation();
+    this.resetVolumeInactivityTimer();
+    const val = Number(e2.target.value);
+    this.localVolume = val;
+    if (this.volumeDebounceTimer) {
+      clearTimeout(this.volumeDebounceTimer);
+      this.volumeDebounceTimer = void 0;
+    }
+    if (this.hass && ((_a2 = this.config) == null ? void 0 : _a2.entity)) {
+      await SpotifyService.setVolume(this.hass, this.config.entity, val);
+    }
+    setTimeout(() => {
+      this.localVolume = null;
+    }, 1200);
+  }
+  async handleVolumeStep(deltaPercent, e2) {
+    var _a2;
+    e2 == null ? void 0 : e2.stopPropagation();
+    this.resetVolumeInactivityTimer();
+    if (!this.hass || !((_a2 = this.config) == null ? void 0 : _a2.entity)) return;
+    const entity = this.hass.states[this.config.entity];
+    if (!entity) return;
+    const currentVol = this.localVolume !== null ? this.localVolume : Math.round((entity.attributes.volume_level ?? 0.5) * 100);
+    const newVol = Math.max(0, Math.min(100, currentVol + deltaPercent));
+    this.localVolume = newVol;
+    await SpotifyService.setVolume(this.hass, this.config.entity, newVol);
+    setTimeout(() => {
+      this.localVolume = null;
+    }, 1200);
+  }
+  async handleSelectDevice(device) {
+    await SpotifyService.transferPlayback(this.hass, this.config.entity, device.id);
+    await this.fetchDevices();
+  }
+  async handleSelectPlaylist(playlist) {
+    this.selectedPlaylist = playlist;
+    this.playlistTracks = [];
+    this.playlistOffset = 0;
+    this.playlistTotal = 0;
+    this.loadingPlaylistTracks = true;
+    try {
+      const page = await SpotifyService.getPlaylistTracks(
+        this.hass,
+        this.config.entity,
+        playlist.id || playlist.uri,
+        50,
+        0
+      );
+      this.playlistTracks = page.items;
+      this.playlistTotal = page.total;
+      this.playlistOffset = page.items.length;
+    } catch (err) {
+      console.error(err);
+    } finally {
+      this.loadingPlaylistTracks = false;
+    }
+  }
+  async loadMorePlaylistTracks() {
+    if (!this.selectedPlaylist || this.loadingMorePlaylistTracks || this.playlistTracks.length >= this.playlistTotal) return;
+    this.loadingMorePlaylistTracks = true;
+    try {
+      const page = await SpotifyService.getPlaylistTracks(
+        this.hass,
+        this.config.entity,
+        this.selectedPlaylist.id || this.selectedPlaylist.uri,
+        50,
+        this.playlistOffset
+      );
+      this.playlistTracks = [...this.playlistTracks, ...page.items];
+      this.playlistOffset += page.items.length;
+      this.playlistTotal = page.total;
+    } catch (err) {
+      console.error(err);
+    } finally {
+      this.loadingMorePlaylistTracks = false;
+    }
+  }
+  handleBackToPlaylists() {
+    this.selectedPlaylist = null;
+    this.playlistTracks = [];
+    this.playlistOffset = 0;
+    this.playlistTotal = 0;
+  }
+  handleContentScroll(e2) {
+    const el = e2.target;
+    if (!el) return;
+    const threshold = 300;
+    if (el.scrollHeight - el.scrollTop - el.clientHeight < threshold) {
+      if (this.activeTab === "liked") {
+        this.loadMoreLikedTracks();
+      } else if (this.activeTab === "playlists" && this.selectedPlaylist) {
+        this.loadMorePlaylistTracks();
+      }
+    }
+  }
+  async handlePlayAllLiked(shuffle = false) {
+    const targetDev = this.getTargetDeviceId();
+    if (shuffle) {
+      await SpotifyService.setShuffle(this.hass, this.config.entity, true);
+    }
+    await SpotifyService.playAllLiked(this.hass, this.config.entity, targetDev);
+  }
+  async handlePlayAllPlaylist(playlist, shuffle = false) {
+    const targetDev = this.getTargetDeviceId();
+    if (shuffle) {
+      await SpotifyService.setShuffle(this.hass, this.config.entity, true);
+    }
+    await SpotifyService.playContext(this.hass, this.config.entity, playlist.uri, 0, targetDev);
+  }
+  async handlePlayPlaylistTrack(playlist, index) {
+    const targetDev = this.getTargetDeviceId();
+    const track = this.playlistTracks[index];
+    await SpotifyService.playContext(
+      this.hass,
+      this.config.entity,
+      playlist.uri,
+      index,
+      targetDev,
+      track == null ? void 0 : track.uri
+    );
+  }
+  async handleToggleShuffle(e2) {
+    e2 == null ? void 0 : e2.stopPropagation();
+    await SpotifyService.toggleShuffle(this.hass, this.config.entity);
+  }
+  async handlePlayPlaylist(playlist) {
+    await this.handleSelectPlaylist(playlist);
+  }
+  async handlePlayLikedTrack(index) {
+    const targetDev = this.getTargetDeviceId();
+    await SpotifyService.playLikedTracks(this.hass, this.config.entity, this.likedTracks, index, targetDev);
+  }
+  async handlePlaySearchTrack(index) {
+    const targetDev = this.getTargetDeviceId();
+    const sliced = this.searchResults.slice(index);
+    const uris = sliced.map((t2) => t2.uri);
+    await SpotifyService.playTracks(this.hass, this.config.entity, uris, targetDev);
+  }
+  /* ======================================================== */
+  /* RENDER METHODS                                           */
+  /* ======================================================== */
+  render() {
+    var _a2;
+    if (!this.hass || !((_a2 = this.config) == null ? void 0 : _a2.entity)) {
+      return this.renderConfigPlaceholder();
+    }
+    const entity = this.hass.states[this.config.entity];
+    if (!entity) {
+      return this.renderConfigPlaceholder();
+    }
+    return b`
+      ${this.renderMiniCard(entity)}
+      ${this.popupOpen ? this.renderBubblePopup(entity) : ""}
+    `;
+  }
+  /**
+   * Preview / Placeholder card when no entity is selected or entity is not found
+   */
+  renderConfigPlaceholder() {
+    var _a2;
+    const isConfigured = Boolean((_a2 = this.config) == null ? void 0 : _a2.entity);
+    const subtitle = isConfigured ? `Entité "${this.config.entity}" introuvable` : "Sélectionnez votre lecteur Spotify dans l’éditeur";
+    return b`
       <div class="mini-card placeholder">
         <div class="mini-main-row">
-          <div class="mini-cover">${bt.spotify}</div>
+          <div class="mini-cover">${icons.spotify}</div>
           <div class="mini-info">
             <div class="mini-title">Better Spotify Card</div>
-            <div class="mini-artist">${t}</div>
+            <div class="mini-artist">${subtitle}</div>
             <div class="mini-device-badge">
-              ${bt.speaker}
+              ${icons.speaker}
               <span>Spotify Connect</span>
             </div>
           </div>
           <div class="mini-controls">
-            <button class="btn-icon" disabled title="Précédent">${bt.skipPrevious}</button>
-            <button class="btn-icon btn-play-mini" disabled title="Lecture">${bt.play}</button>
-            <button class="btn-icon" disabled title="Suivant">${bt.skipNext}</button>
+            <button class="btn-icon" disabled title="Précédent">${icons.skipPrevious}</button>
+            <button class="btn-icon btn-play-mini" disabled title="Lecture">${icons.play}</button>
+            <button class="btn-icon" disabled title="Suivant">${icons.skipNext}</button>
           </div>
         </div>
         <div class="mini-progress-bar">
           <div class="mini-progress-fill" style="width: 35%;"></div>
         </div>
       </div>
-    `}renderMiniCard(t){const e="playing"===t.state,i=t.attributes.media_title||"Aucune lecture",s=t.attributes.media_artist||t.attributes.sp_user_display_name||"Spotify",a=t.attributes.entity_picture,r=t.attributes.source||t.attributes.sp_device_name,o=t.attributes.media_duration||0,n=o>0?Math.min(100,this.currentPosition/o*100):0;return j`
-      <div class="mini-card" @click=${()=>this.openPopup()}>
+    `;
+  }
+  /**
+   * Mini Player (Dashboard Card)
+   */
+  renderMiniCard(entity) {
+    const isPlaying = entity.state === "playing";
+    const title = entity.attributes.media_title || "Aucune lecture";
+    const artist = entity.attributes.media_artist || entity.attributes.sp_user_display_name || "Spotify";
+    const picture = entity.attributes.entity_picture;
+    const deviceName = entity.attributes.source || entity.attributes.sp_device_name;
+    const duration = entity.attributes.media_duration || 0;
+    const progressPercent = duration > 0 ? Math.min(100, this.currentPosition / duration * 100) : 0;
+    return b`
+      <div class="mini-card" @click=${() => this.openPopup()}>
         <div class="mini-main-row">
-          ${a?j`<img class="mini-cover" src=${a} alt="Album cover" />`:j`<div class="mini-cover">${bt.musicNote}</div>`}
+          ${picture ? b`<img class="mini-cover" src=${picture} alt="Album cover" />` : b`<div class="mini-cover">${icons.musicNote}</div>`}
 
           <div class="mini-info">
-            <div class="mini-title">${i}</div>
-            <div class="mini-artist">${s}</div>
-            ${r?j`
+            <div class="mini-title">${title}</div>
+            <div class="mini-artist">${artist}</div>
+            ${deviceName ? b`
                   <div class="mini-device-badge">
-                    ${bt.speaker}
-                    <span>${r}</span>
+                    ${icons.speaker}
+                    <span>${deviceName}</span>
                   </div>
-                `:""}
+                ` : ""}
           </div>
 
           <div class="mini-controls">
-            <button class="btn-icon" title="Précédent" @click=${t=>this.handlePrevious(t)}>
-              ${bt.skipPrevious}
+            <button class="btn-icon" title="Précédent" @click=${(e2) => this.handlePrevious(e2)}>
+              ${icons.skipPrevious}
             </button>
             <button
               class="btn-icon btn-play-mini"
-              title=${e?"Pause":"Lecture"}
-              @click=${t=>this.handlePlayPause(t)}
+              title=${isPlaying ? "Pause" : "Lecture"}
+              @click=${(e2) => this.handlePlayPause(e2)}
             >
-              ${e?bt.pause:bt.play}
+              ${isPlaying ? icons.pause : icons.play}
             </button>
-            <button class="btn-icon" title="Suivant" @click=${t=>this.handleNext(t)}>
-              ${bt.skipNext}
+            <button class="btn-icon" title="Suivant" @click=${(e2) => this.handleNext(e2)}>
+              ${icons.skipNext}
             </button>
           </div>
         </div>
 
         <div class="mini-progress-bar">
-          <div class="mini-progress-fill" style="width: ${n}%;"></div>
+          <div class="mini-progress-fill" style="width: ${progressPercent}%;"></div>
         </div>
       </div>
-    `}renderBubblePopup(t){const e=t.attributes.source||t.attributes.sp_device_name||"Spotify Connect";return j`
-      <div class="bubble-backdrop" @click=${()=>this.closePopup()}>
-        <div class="bubble-sheet" @click=${t=>t.stopPropagation()}>
+    `;
+  }
+  /**
+   * Bubble-Card Style Popup
+   */
+  renderBubblePopup(entity) {
+    const deviceName = entity.attributes.source || entity.attributes.sp_device_name || "Spotify Connect";
+    return b`
+      <div class="bubble-backdrop" @click=${() => this.closePopup()}>
+        <div class="bubble-sheet" @click=${(e2) => e2.stopPropagation()}>
           <!-- Header -->
           <div class="sheet-header">
             <div class="sheet-header-left">
-              <span class="spotify-brand-icon">${bt.spotify}</span>
+              <span class="spotify-brand-icon">${icons.spotify}</span>
               <span class="sheet-header-title">Spotify</span>
               <button
                 class="sheet-connect-pill"
                 title="Changer d'appareil"
-                @click=${()=>this.setTab("devices")}
+                @click=${() => this.setTab("devices")}
               >
-                ${bt.speaker}
-                <span>${e}</span>
+                ${icons.speaker}
+                <span>${deviceName}</span>
               </button>
             </div>
-            <button class="btn-close" title="Fermer" @click=${()=>this.closePopup()}>
-              ${bt.close}
+            <button class="btn-close" title="Fermer" @click=${() => this.closePopup()}>
+              ${icons.close}
             </button>
           </div>
 
           <!-- Menu Tabs (placed at top for natural navigation) -->
           <div class="tab-bar">
             <button
-              class="tab-btn ${"liked"===this.activeTab?"active":""}"
-              @click=${()=>this.setTab("liked")}
+              class="tab-btn ${this.activeTab === "liked" ? "active" : ""}"
+              @click=${() => this.setTab("liked")}
             >
-              ${bt.heart}
+              ${icons.heart}
               <span>Titres likés</span>
             </button>
             <button
-              class="tab-btn ${"playlists"===this.activeTab?"active":""}"
-              @click=${()=>this.setTab("playlists")}
+              class="tab-btn ${this.activeTab === "playlists" ? "active" : ""}"
+              @click=${() => this.setTab("playlists")}
             >
-              ${bt.playlist}
+              ${icons.playlist}
               <span>Playlists</span>
             </button>
             <button
-              class="tab-btn ${"search"===this.activeTab?"active":""}"
-              @click=${()=>this.setTab("search")}
+              class="tab-btn ${this.activeTab === "search" ? "active" : ""}"
+              @click=${() => this.setTab("search")}
             >
-              ${bt.search}
+              ${icons.search}
               <span>Recherche</span>
             </button>
             <button
-              class="tab-btn ${"devices"===this.activeTab?"active":""}"
-              @click=${()=>this.setTab("devices")}
+              class="tab-btn ${this.activeTab === "devices" ? "active" : ""}"
+              @click=${() => this.setTab("devices")}
             >
-              ${bt.connectDevices}
+              ${icons.connectDevices}
               <span>Appareils</span>
             </button>
           </div>
 
           <!-- Tab Content Body (middle scrollable area) -->
-          <div class="tab-content" @scroll=${t=>this.handleContentScroll(t)}>
-            ${this.renderActiveTabContent(t)}
+          <div class="tab-content" @scroll=${(e2) => this.handleContentScroll(e2)}>
+            ${this.renderActiveTabContent(entity)}
           </div>
 
           <!-- Now Playing Player (docked at the bottom) -->
-          ${this.renderNowPlayingSection(t)}
+          ${this.renderNowPlayingSection(entity)}
         </div>
       </div>
-    `}renderNowPlayingSection(t){const e="playing"===t.state,i=t.attributes.media_title||"Aucun titre en cours",s=t.attributes.media_artist||"Sélectionnez un morceau ci-dessus",a=t.attributes.entity_picture,r=t.attributes.media_duration||0,o=r>0?Math.min(100,Math.max(0,this.currentPosition/r*100)):0,n=null!==this.localVolume?this.localVolume:Math.round(100*(t.attributes.volume_level??.5)),l=0===n||n<50?bt.volumeLow:bt.volumeHigh;return j`
+    `;
+  }
+  /**
+   * Now Playing widget inside Popup (Spotify Desktop Style at bottom)
+   */
+  renderNowPlayingSection(entity) {
+    const isPlaying = entity.state === "playing";
+    const title = entity.attributes.media_title || "Aucun titre en cours";
+    const artist = entity.attributes.media_artist || "Sélectionnez un morceau ci-dessus";
+    const picture = entity.attributes.entity_picture;
+    const duration = entity.attributes.media_duration || 0;
+    const progressPercent = duration > 0 ? Math.min(100, Math.max(0, this.currentPosition / duration * 100)) : 0;
+    const volumeLevel = this.localVolume !== null ? this.localVolume : Math.round((entity.attributes.volume_level ?? 0.5) * 100);
+    const volumeIcon = volumeLevel === 0 ? icons.volumeLow : volumeLevel < 50 ? icons.volumeLow : icons.volumeHigh;
+    return b`
       <div class="now-playing-section">
         <!-- Optional: Fine Volume Slider Popover -->
-        ${this.volumeMenuOpen?j`
-            <div class="volume-popover">
+        ${this.volumeMenuOpen ? b`
+            <div
+              class="volume-popover"
+              @pointerdown=${() => this.resetVolumeInactivityTimer()}
+              @touchstart=${() => this.resetVolumeInactivityTimer()}
+            >
               <button
                 class="btn-vol-step"
                 title="Diminuer le volume (-1%)"
-                @click=${t=>this.handleVolumeStep(-1,t)}
+                @click=${(e2) => this.handleVolumeStep(-1, e2)}
               >
                 <span>−</span>
               </button>
@@ -1499,347 +3255,553 @@ var t=globalThis,e=t.ShadowRoot&&(void 0===t.ShadyCSS||t.ShadyCSS.nativeShadow)&
                   min="0"
                   max="100"
                   step="1"
-                  .value=${n}
-                  style="--volume-percent: ${n}%;"
-                  @input=${t=>this.handleVolumeInput(t)}
-                  @change=${t=>this.handleVolumeChange(t)}
+                  .value=${volumeLevel}
+                  style="--volume-percent: ${volumeLevel}%;"
+                  @input=${(e2) => this.handleVolumeInput(e2)}
+                  @change=${(e2) => this.handleVolumeChange(e2)}
                 />
               </div>
 
               <button
                 class="btn-vol-step"
                 title="Augmenter le volume (+1%)"
-                @click=${t=>this.handleVolumeStep(1,t)}
+                @click=${(e2) => this.handleVolumeStep(1, e2)}
               >
                 <span>+</span>
               </button>
 
-              <span class="volume-percent-label">${n}%</span>
+              <span class="volume-percent-label">${volumeLevel}%</span>
 
               <button
                 class="btn-vol-close"
                 title="Fermer le menu volume"
-                @click=${t=>{t.stopPropagation(),this.volumeMenuOpen=!1}}
+                @click=${(e2) => {
+      e2.stopPropagation();
+      this.closeVolumeMenu();
+    }}
               >
-                ${bt.close}
+                ${icons.close}
               </button>
             </div>
-          `:""}
+          ` : ""}
 
         <!-- Line 1: Seek / timeline bar on top -->
         <div class="desktop-seek-row">
-          <span class="desktop-seek-time">${ft(this.currentPosition)}</span>
+          <span class="desktop-seek-time">${formatSeconds(this.currentPosition)}</span>
           <input
             type="range"
             class="seek-slider"
             min="0"
-            max=${r||100}
+            max=${duration || 100}
             step="1"
             .value=${this.currentPosition}
-            style="--seek-percent: ${o}%;"
-            @input=${t=>{this.currentPosition=Number(t.target.value)}}
-            @change=${t=>this.handleSeek(t)}
+            style="--seek-percent: ${progressPercent}%;"
+            @input=${(e2) => {
+      this.currentPosition = Number(e2.target.value);
+    }}
+            @change=${(e2) => this.handleSeek(e2)}
           />
-          <span class="desktop-seek-time right">${ft(r)}</span>
+          <span class="desktop-seek-time right">${formatSeconds(duration)}</span>
         </div>
 
         <!-- Line 2: 3-column Spotify Desktop row -->
         <div class="desktop-player-row">
           <!-- Left: Cover, Title, Artist -->
           <div class="desktop-col-left">
-            ${a?j`<img class="desktop-cover" src=${a} alt="Cover" />`:j`<div class="desktop-cover list-item-thumb">${bt.musicNote}</div>`}
+            ${picture ? b`<img class="desktop-cover" src=${picture} alt="Cover" />` : b`<div class="desktop-cover list-item-thumb">${icons.musicNote}</div>`}
             <div class="desktop-meta">
-              <div class="desktop-title" title=${i}>${i}</div>
-              <div class="desktop-artist" title=${s}>${s}</div>
+              <div class="desktop-title" title=${title}>${title}</div>
+              <div class="desktop-artist" title=${artist}>${artist}</div>
             </div>
           </div>
 
           <!-- Center: PREV PLAY NEXT -->
           <div class="desktop-col-center">
-            <button class="btn-icon" title="Précédent" @click=${t=>this.handlePrevious(t)}>
-              ${bt.skipPrevious}
+            <button class="btn-icon" title="Précédent" @click=${(e2) => this.handlePrevious(e2)}>
+              ${icons.skipPrevious}
             </button>
             <button
               class="btn-play-large"
-              title=${e?"Pause":"Lecture"}
-              @click=${t=>this.handlePlayPause(t)}
+              title=${isPlaying ? "Pause" : "Lecture"}
+              @click=${(e2) => this.handlePlayPause(e2)}
             >
-              ${e?bt.pause:bt.play}
+              ${isPlaying ? icons.pause : icons.play}
             </button>
-            <button class="btn-icon" title="Suivant" @click=${t=>this.handleNext(t)}>
-              ${bt.skipNext}
+            <button class="btn-icon" title="Suivant" @click=${(e2) => this.handleNext(e2)}>
+              ${icons.skipNext}
             </button>
           </div>
 
           <!-- Right: MODE LECTURE (Shuffle) & Single Volume Button -->
           <div class="desktop-col-right">
             <button
-              class="btn-shuffle-toggle ${t.attributes.shuffle?"active":""}"
-              title=${t.attributes.shuffle?"Mode aléatoire : activé":"Mode normal (cliquer pour activer l'aléatoire)"}
-              @click=${t=>this.handleToggleShuffle(t)}
+              class="btn-shuffle-toggle ${entity.attributes.shuffle ? "active" : ""}"
+              title=${entity.attributes.shuffle ? "Mode aléatoire : activé" : "Mode normal (cliquer pour activer l'aléatoire)"}
+              @click=${(e2) => this.handleToggleShuffle(e2)}
             >
-              ${bt.shuffle}
+              ${icons.shuffle}
             </button>
 
             <button
-              class="btn-vol-trigger ${this.volumeMenuOpen?"active":""}"
-              title="Régler le volume (${n}%)"
-              @click=${t=>this.handleToggleVolumeMenu(t)}
+              class="btn-vol-trigger ${this.volumeMenuOpen ? "active" : ""}"
+              title="Régler le volume (${volumeLevel}%)"
+              @click=${(e2) => this.handleToggleVolumeMenu(e2)}
             >
-              ${l}
-              <span class="vol-label">${n}%</span>
+              ${volumeIcon}
+              <span class="vol-label">${volumeLevel}%</span>
             </button>
           </div>
         </div>
       </div>
-    `}renderActiveTabContent(t){switch(this.activeTab){case"liked":return this.renderLikedTab(t);case"playlists":return this.renderPlaylistsTab(t);case"search":return this.renderSearchTab(t);case"devices":return this.renderDevicesTab(t)}}renderLikedTab(t){if(this.loadingLiked)return j`
+    `;
+  }
+  /**
+   * Tab Content Router
+   */
+  renderActiveTabContent(entity) {
+    switch (this.activeTab) {
+      case "liked":
+        return this.renderLikedTab(entity);
+      case "playlists":
+        return this.renderPlaylistsTab(entity);
+      case "search":
+        return this.renderSearchTab(entity);
+      case "devices":
+        return this.renderDevicesTab(entity);
+    }
+  }
+  /**
+   * Tab 1: Liked Songs (Titres likés)
+   */
+  renderLikedTab(entity) {
+    if (this.loadingLiked) {
+      return b`
         <div class="state-message">
           <div class="spinner"></div>
           <div>Chargement des titres likés...</div>
         </div>
-      `;if(0===this.likedTracks.length)return j`
+      `;
+    }
+    if (this.likedTracks.length === 0) {
+      return b`
         <div class="state-message">
-          ${bt.heart}
+          ${icons.heart}
           <div>Aucun titre liké trouvé ou synchronisé.</div>
-          <button class="sheet-connect-pill" @click=${()=>this.fetchLikedTracks()}>Actualiser</button>
+          <button class="sheet-connect-pill" @click=${() => this.fetchLikedTracks()}>Actualiser</button>
         </div>
-      `;const e=t.attributes.media_title;return j`
+      `;
+    }
+    const currentTrackTitle = entity.attributes.media_title;
+    return b`
       <div class="tab-action-bar">
         <div class="tab-action-title">
-          ${this.likedTracks.length}${this.likedTotal>0?` / ${this.likedTotal}`:""} titres
+          ${this.likedTracks.length}${this.likedTotal > 0 ? ` / ${this.likedTotal}` : ""} titres
         </div>
         <div class="tab-action-buttons">
           <button
             class="btn-pill-play"
             title="Tout écouter"
-            @click=${()=>this.handlePlayAllLiked(!1)}
+            @click=${() => this.handlePlayAllLiked(false)}
           >
-            ${bt.play}
+            ${icons.play}
             <span>Tout écouter</span>
           </button>
         </div>
       </div>
 
       <div class="items-list">
-        ${this.likedTracks.map((t,i)=>{const s=e&&t.name===e,a=t.album?.images?.[0]?.url,r=t.artists.map(t=>t.name).join(", ");return j`
+        ${this.likedTracks.map((track, index) => {
+      var _a2, _b, _c;
+      const isCurrent = currentTrackTitle && track.name === currentTrackTitle;
+      const cover = (_c = (_b = (_a2 = track.album) == null ? void 0 : _a2.images) == null ? void 0 : _b[0]) == null ? void 0 : _c.url;
+      const artistNames = track.artists.map((a2) => a2.name).join(", ");
+      return b`
             <div
               class="list-item"
-              @click=${()=>this.handlePlayLikedTrack(i)}
+              @click=${() => this.handlePlayLikedTrack(index)}
               title="Lancer la lecture à partir de ce titre"
             >
-              ${a?j`<img class="list-item-thumb" src=${a} alt="Cover" />`:j`<div class="list-item-thumb">${bt.musicNote}</div>`}
+              ${cover ? b`<img class="list-item-thumb" src=${cover} alt="Cover" />` : b`<div class="list-item-thumb">${icons.musicNote}</div>`}
 
               <div class="list-item-text">
-                <div class="list-item-title ${s?"active":""}">
-                  ${t.name}
+                <div class="list-item-title ${isCurrent ? "active" : ""}">
+                  ${track.name}
                 </div>
-                <div class="list-item-subtitle">${r}</div>
+                <div class="list-item-subtitle">${artistNames}</div>
               </div>
 
-              <div class="list-item-duration">${gt(t.duration_ms)}</div>
+              <div class="list-item-duration">${formatDuration(track.duration_ms)}</div>
             </div>
-          `})}
-        ${this.loadingMoreLiked?j`<div class="loading-more-spinner"><div class="spinner"></div></div>`:""}
+          `;
+    })}
+        ${this.loadingMoreLiked ? b`<div class="loading-more-spinner"><div class="spinner"></div></div>` : ""}
       </div>
-    `}renderPlaylistsTab(t){if(this.selectedPlaylist){const e=this.selectedPlaylist,i=e.images?.[0]?.url,s=t.attributes.media_title;return j`
-        <button class="btn-back" @click=${()=>this.handleBackToPlaylists()}>
-          ${bt.arrowBack}
+    `;
+  }
+  /**
+   * Tab 2: Playlists
+   */
+  renderPlaylistsTab(entity) {
+    var _a2, _b;
+    if (this.selectedPlaylist) {
+      const pl = this.selectedPlaylist;
+      const cover = (_b = (_a2 = pl.images) == null ? void 0 : _a2[0]) == null ? void 0 : _b.url;
+      const currentTrackTitle = entity.attributes.media_title;
+      return b`
+        <button class="btn-back" @click=${() => this.handleBackToPlaylists()}>
+          ${icons.arrowBack}
           <span>Toutes les playlists</span>
         </button>
 
         <div class="playlist-header">
-          ${i?j`<img class="playlist-header-cover" src=${i} alt="Cover" />`:j`<div class="playlist-header-cover list-item-thumb">${bt.playlist}</div>`}
+          ${cover ? b`<img class="playlist-header-cover" src=${cover} alt="Cover" />` : b`<div class="playlist-header-cover list-item-thumb">${icons.playlist}</div>`}
           <div class="playlist-header-meta">
-            <div class="playlist-header-title">${e.name}</div>
+            <div class="playlist-header-title">${pl.name}</div>
             <div class="playlist-header-sub">
-              ${e.tracks_total?`${e.tracks_total} titres`:""}
-              ${e.owner_name?`• Par ${e.owner_name}`:""}
+              ${pl.tracks_total ? `${pl.tracks_total} titres` : ""}
+              ${pl.owner_name ? `• Par ${pl.owner_name}` : ""}
             </div>
           </div>
         </div>
 
         <div class="tab-action-bar">
           <div class="tab-action-title">
-            ${this.playlistTracks.length}${this.playlistTotal>0?` / ${this.playlistTotal}`:""} titres
+            ${this.playlistTracks.length}${this.playlistTotal > 0 ? ` / ${this.playlistTotal}` : ""} titres
           </div>
           <div class="tab-action-buttons">
             <button
               class="btn-pill-play"
               title="Tout écouter"
-              @click=${()=>this.handlePlayAllPlaylist(e,!1)}
+              @click=${() => this.handlePlayAllPlaylist(pl, false)}
             >
-              ${bt.play}
+              ${icons.play}
               <span>Tout écouter</span>
             </button>
           </div>
         </div>
 
-        ${this.loadingPlaylistTracks?j`
+        ${this.loadingPlaylistTracks ? b`
               <div class="state-message">
                 <div class="spinner"></div>
                 <div>Chargement des morceaux...</div>
               </div>
-            `:0===this.playlistTracks.length?j`
+            ` : this.playlistTracks.length === 0 ? b`
                 <div class="state-message">
                   <div>Aucun morceau visible dans la liste.</div>
                   <div style="font-size: 12px; color: var(--sp-text-subdued); margin-top: 6px;">
                     Vous pouvez tout de même écouter la playlist avec le bouton « Tout écouter ».
                   </div>
                 </div>
-              `:j`
+              ` : b`
               <div class="items-list">
-                ${this.playlistTracks.map((t,i)=>{const a=s&&t.name===s,r=t.album?.images?.[0]?.url,o=t.artists.map(t=>t.name).join(", ");return j`
+                ${this.playlistTracks.map((track, index) => {
+        var _a3, _b2, _c;
+        const isCurrent = currentTrackTitle && track.name === currentTrackTitle;
+        const trackCover = (_c = (_b2 = (_a3 = track.album) == null ? void 0 : _a3.images) == null ? void 0 : _b2[0]) == null ? void 0 : _c.url;
+        const artistNames = track.artists.map((a2) => a2.name).join(", ");
+        return b`
                     <div
                       class="list-item"
-                      @click=${()=>this.handlePlayPlaylistTrack(e,i)}
+                      @click=${() => this.handlePlayPlaylistTrack(pl, index)}
                       title="Lancer à partir de ce morceau"
                     >
-                      ${r?j`<img class="list-item-thumb" src=${r} alt="Cover" />`:j`<div class="list-item-thumb">${bt.musicNote}</div>`}
+                      ${trackCover ? b`<img class="list-item-thumb" src=${trackCover} alt="Cover" />` : b`<div class="list-item-thumb">${icons.musicNote}</div>`}
 
                       <div class="list-item-text">
-                        <div class="list-item-title ${a?"active":""}">
-                          ${t.name}
+                        <div class="list-item-title ${isCurrent ? "active" : ""}">
+                          ${track.name}
                         </div>
-                        <div class="list-item-subtitle">${o}</div>
+                        <div class="list-item-subtitle">${artistNames}</div>
                       </div>
 
-                      <div class="list-item-duration">${gt(t.duration_ms)}</div>
+                      <div class="list-item-duration">${formatDuration(track.duration_ms)}</div>
                     </div>
-                  `})}
-                ${this.loadingMorePlaylistTracks?j`<div class="loading-more-spinner"><div class="spinner"></div></div>`:""}
+                  `;
+      })}
+                ${this.loadingMorePlaylistTracks ? b`<div class="loading-more-spinner"><div class="spinner"></div></div>` : ""}
               </div>
             `}
-      `}return this.loadingPlaylists?j`
+      `;
+    }
+    if (this.loadingPlaylists) {
+      return b`
         <div class="state-message">
           <div class="spinner"></div>
           <div>Chargement des playlists...</div>
         </div>
-      `:0===this.playlists.length?j`
+      `;
+    }
+    if (this.playlists.length === 0) {
+      return b`
         <div class="state-message">
-          ${bt.playlist}
+          ${icons.playlist}
           <div>Aucune playlist trouvée.</div>
-          <button class="sheet-connect-pill" @click=${()=>this.fetchPlaylists()}>Actualiser</button>
+          <button class="sheet-connect-pill" @click=${() => this.fetchPlaylists()}>Actualiser</button>
         </div>
-      `:j`
+      `;
+    }
+    return b`
       <div class="items-list">
-        ${this.playlists.map(t=>{const e=t.images?.[0]?.url,i=t.tracks_total?`${t.tracks_total} titres`:t.owner_name||"Playlist";return j`
+        ${this.playlists.map((pl) => {
+      var _a3, _b2;
+      const cover = (_b2 = (_a3 = pl.images) == null ? void 0 : _a3[0]) == null ? void 0 : _b2.url;
+      const subtitle = pl.tracks_total ? `${pl.tracks_total} titres` : pl.owner_name || "Playlist";
+      return b`
             <div
               class="list-item"
-              @click=${()=>this.handleSelectPlaylist(t)}
-              title="Afficher les titres de la playlist ${t.name}"
+              @click=${() => this.handleSelectPlaylist(pl)}
+              title="Afficher les titres de la playlist ${pl.name}"
             >
-              ${e?j`<img class="list-item-thumb" src=${e} alt="Cover" />`:j`<div class="list-item-thumb">${bt.playlist}</div>`}
+              ${cover ? b`<img class="list-item-thumb" src=${cover} alt="Cover" />` : b`<div class="list-item-thumb">${icons.playlist}</div>`}
 
               <div class="list-item-text">
-                <div class="list-item-title">${t.name}</div>
-                <div class="list-item-subtitle">${i}</div>
+                <div class="list-item-title">${pl.name}</div>
+                <div class="list-item-subtitle">${subtitle}</div>
               </div>
 
               <div class="list-item-arrow">
-                ${bt.chevronRight}
+                ${icons.chevronRight}
               </div>
             </div>
-          `})}
+          `;
+    })}
       </div>
-    `}renderSearchTab(t){const e=t.attributes.media_title;return j`
+    `;
+  }
+  /**
+   * Tab 3: Search
+   */
+  renderSearchTab(entity) {
+    const currentTrackTitle = entity.attributes.media_title;
+    return b`
       <div class="search-box-wrapper">
-        <span class="search-icon-left">${bt.search}</span>
+        <span class="search-icon-left">${icons.search}</span>
         <input
           type="text"
           class="search-input"
           placeholder="Rechercher un titre ou un artiste..."
           .value=${this.searchQuery}
-          @input=${t=>this.handleSearchInput(t)}
+          @input=${(e2) => this.handleSearchInput(e2)}
         />
-        ${this.searchQuery?j`
-              <button class="search-btn-clear" title="Effacer" @click=${()=>this.clearSearch()}>
-                ${bt.clear}
+        ${this.searchQuery ? b`
+              <button class="search-btn-clear" title="Effacer" @click=${() => this.clearSearch()}>
+                ${icons.clear}
               </button>
-            `:""}
+            ` : ""}
       </div>
 
-      ${this.loadingSearch?j`
+      ${this.loadingSearch ? b`
             <div class="state-message">
               <div class="spinner"></div>
               <div>Recherche dans Spotify...</div>
             </div>
-          `:""}
-      ${!this.loadingSearch&&this.searchQuery&&0===this.searchResults.length?j`
+          ` : ""}
+      ${!this.loadingSearch && this.searchQuery && this.searchResults.length === 0 ? b`
             <div class="state-message">
-              ${bt.search}
+              ${icons.search}
               <div>Aucun morceau trouvé pour "${this.searchQuery}".</div>
             </div>
-          `:""}
-      ${this.loadingSearch||this.searchQuery||0!==this.searchResults.length?"":j`
+          ` : ""}
+      ${!this.loadingSearch && !this.searchQuery && this.searchResults.length === 0 ? b`
             <div class="state-message">
-              ${bt.musicNote}
+              ${icons.musicNote}
               <div>Tapez un nom de morceau, d'album ou d'artiste.</div>
             </div>
-          `}
+          ` : ""}
 
       <div class="items-list">
-        ${this.searchResults.map((t,i)=>{const s=e&&t.name===e,a=t.album?.images?.[0]?.url,r=t.artists.map(t=>t.name).join(", ");return j`
+        ${this.searchResults.map((track, index) => {
+      var _a2, _b, _c;
+      const isCurrent = currentTrackTitle && track.name === currentTrackTitle;
+      const cover = (_c = (_b = (_a2 = track.album) == null ? void 0 : _a2.images) == null ? void 0 : _b[0]) == null ? void 0 : _c.url;
+      const artistNames = track.artists.map((a2) => a2.name).join(", ");
+      return b`
             <div
               class="list-item"
-              @click=${()=>this.handlePlaySearchTrack(i)}
+              @click=${() => this.handlePlaySearchTrack(index)}
               title="Lire ce titre"
             >
-              ${a?j`<img class="list-item-thumb" src=${a} alt="Cover" />`:j`<div class="list-item-thumb">${bt.musicNote}</div>`}
+              ${cover ? b`<img class="list-item-thumb" src=${cover} alt="Cover" />` : b`<div class="list-item-thumb">${icons.musicNote}</div>`}
 
               <div class="list-item-text">
-                <div class="list-item-title ${s?"active":""}">
-                  ${t.name}
+                <div class="list-item-title ${isCurrent ? "active" : ""}">
+                  ${track.name}
                 </div>
-                <div class="list-item-subtitle">${r}</div>
+                <div class="list-item-subtitle">${artistNames}</div>
               </div>
 
-              <div class="list-item-duration">${gt(t.duration_ms)}</div>
+              <div class="list-item-duration">${formatDuration(track.duration_ms)}</div>
             </div>
-          `})}
+          `;
+    })}
       </div>
-    `}renderDevicesTab(t){if(this.loadingDevices)return j`
+    `;
+  }
+  /**
+   * Tab 4: Connect Devices
+   */
+  renderDevicesTab(entity) {
+    if (this.loadingDevices) {
+      return b`
         <div class="state-message">
           <div class="spinner"></div>
           <div>Recherche des appareils Spotify Connect...</div>
         </div>
-      `;if(0===this.devices.length)return j`
+      `;
+    }
+    if (this.devices.length === 0) {
+      return b`
         <div class="state-message">
-          ${bt.speaker}
+          ${icons.speaker}
           <div>Aucun appareil Spotify Connect détecté.</div>
-          <button class="sheet-connect-pill" @click=${()=>this.fetchDevices()}>Actualiser</button>
+          <button class="sheet-connect-pill" @click=${() => this.fetchDevices()}>Actualiser</button>
         </div>
-      `;const e=t.attributes.source||t.attributes.sp_device_name;return j`
+      `;
+    }
+    const currentSource = entity.attributes.source || entity.attributes.sp_device_name;
+    return b`
       <div class="items-list">
-        ${this.devices.map(t=>{const i=t.is_active||t.name===e,s=this.getDefaultDevice(),a=s===t.id||s===t.name;return j`
+        ${this.devices.map((device) => {
+      const isActive = device.is_active || device.name === currentSource;
+      const defaultDev = this.getDefaultDevice();
+      const isDefault = defaultDev === device.id || defaultDev === device.name;
+      return b`
             <div
               class="list-item"
-              @click=${()=>this.handleSelectDevice(t)}
-              title="Diffuser sur ${t.name}"
+              @click=${() => this.handleSelectDevice(device)}
+              title="Diffuser sur ${device.name}"
             >
               <div class="list-item-thumb list-item-thumb-round">
-                ${bt.speaker}
+                ${icons.speaker}
               </div>
 
               <div class="list-item-text">
-                <div class="list-item-title ${i?"active":""}">
-                  ${t.name}
-                  ${a?j`<span class="default-device-badge">⭐ Par défaut</span>`:""}
+                <div class="list-item-title ${isActive ? "active" : ""}">
+                  ${device.name}
+                  ${isDefault ? b`<span class="default-device-badge">⭐ Par défaut</span>` : ""}
                 </div>
-                <div class="list-item-subtitle">${t.type||"Haut-parleur"}</div>
+                <div class="list-item-subtitle">${device.type || "Haut-parleur"}</div>
               </div>
 
               <div class="list-item-right-actions">
-                ${i?j`<div class="list-item-badge">Actif</div>`:""}
+                ${isActive ? b`<div class="list-item-badge">Actif</div>` : ""}
                 <button
-                  class="btn-star-default ${a?"is-default":""}"
-                  title=${a?"Lecteur par défaut (cliquer pour retirer)":"Définir comme lecteur par défaut"}
-                  @click=${e=>{e.stopPropagation(),this.setDefaultDevice(t.id||t.name)}}
+                  class="btn-star-default ${isDefault ? "is-default" : ""}"
+                  title=${isDefault ? "Lecteur par défaut (cliquer pour retirer)" : "Définir comme lecteur par défaut"}
+                  @click=${(e2) => {
+        e2.stopPropagation();
+        this.setDefaultDevice(device.id || device.name);
+      }}
                 >
-                  ${a?"⭐":"☆"}
+                  ${isDefault ? "⭐" : "☆"}
                 </button>
               </div>
             </div>
-          `})}
+          `;
+    })}
       </div>
-    `}};yt([pt({attribute:!1})],$t.prototype,"hass",void 0),yt([ut()],$t.prototype,"config",void 0),yt([ut()],$t.prototype,"popupOpen",void 0),yt([ut()],$t.prototype,"activeTab",void 0),yt([ut()],$t.prototype,"playlists",void 0),yt([ut()],$t.prototype,"likedTracks",void 0),yt([ut()],$t.prototype,"likedTotal",void 0),yt([ut()],$t.prototype,"likedOffset",void 0),yt([ut()],$t.prototype,"loadingMoreLiked",void 0),yt([ut()],$t.prototype,"searchResults",void 0),yt([ut()],$t.prototype,"devices",void 0),yt([ut()],$t.prototype,"selectedPlaylist",void 0),yt([ut()],$t.prototype,"playlistTracks",void 0),yt([ut()],$t.prototype,"playlistTotal",void 0),yt([ut()],$t.prototype,"playlistOffset",void 0),yt([ut()],$t.prototype,"loadingPlaylistTracks",void 0),yt([ut()],$t.prototype,"loadingMorePlaylistTracks",void 0),yt([ut()],$t.prototype,"loadingPlaylists",void 0),yt([ut()],$t.prototype,"loadingLiked",void 0),yt([ut()],$t.prototype,"loadingSearch",void 0),yt([ut()],$t.prototype,"loadingDevices",void 0),yt([ut()],$t.prototype,"searchQuery",void 0),yt([ut()],$t.prototype,"currentPosition",void 0),yt([ut()],$t.prototype,"volumeMenuOpen",void 0),yt([ut()],$t.prototype,"localVolume",void 0),customElements.get("better-spotify-card")||customElements.define("better-spotify-card",$t),window.customCards=window.customCards||[],window.customCards.some(t=>"better-spotify-card"===t.type)||window.customCards.push({type:"better-spotify-card",name:"Better Spotify Card",description:"Lecteur Spotify élégant style Android avec popup type Bubble-Card",preview:!0,documentationURL:"https://github.com/lmindwarel/better-spotify-card"}),console.info("%c BETTER-SPOTIFY-CARD %c v1.8.0 ","color: white; background: #1DB954; font-weight: 700; border-radius: 3px 0 0 3px;","color: white; background: #282828; font-weight: 700; border-radius: 0 3px 3px 0;");export{$t as BetterSpotifyCard};
+    `;
+  }
+};
+_BetterSpotifyCard.styles = cardStyles;
+let BetterSpotifyCard = _BetterSpotifyCard;
+__decorateClass([
+  n2({ attribute: false })
+], BetterSpotifyCard.prototype, "hass");
+__decorateClass([
+  r()
+], BetterSpotifyCard.prototype, "config");
+__decorateClass([
+  r()
+], BetterSpotifyCard.prototype, "popupOpen");
+__decorateClass([
+  r()
+], BetterSpotifyCard.prototype, "activeTab");
+__decorateClass([
+  r()
+], BetterSpotifyCard.prototype, "playlists");
+__decorateClass([
+  r()
+], BetterSpotifyCard.prototype, "likedTracks");
+__decorateClass([
+  r()
+], BetterSpotifyCard.prototype, "likedTotal");
+__decorateClass([
+  r()
+], BetterSpotifyCard.prototype, "likedOffset");
+__decorateClass([
+  r()
+], BetterSpotifyCard.prototype, "loadingMoreLiked");
+__decorateClass([
+  r()
+], BetterSpotifyCard.prototype, "searchResults");
+__decorateClass([
+  r()
+], BetterSpotifyCard.prototype, "devices");
+__decorateClass([
+  r()
+], BetterSpotifyCard.prototype, "selectedPlaylist");
+__decorateClass([
+  r()
+], BetterSpotifyCard.prototype, "playlistTracks");
+__decorateClass([
+  r()
+], BetterSpotifyCard.prototype, "playlistTotal");
+__decorateClass([
+  r()
+], BetterSpotifyCard.prototype, "playlistOffset");
+__decorateClass([
+  r()
+], BetterSpotifyCard.prototype, "loadingPlaylistTracks");
+__decorateClass([
+  r()
+], BetterSpotifyCard.prototype, "loadingMorePlaylistTracks");
+__decorateClass([
+  r()
+], BetterSpotifyCard.prototype, "loadingPlaylists");
+__decorateClass([
+  r()
+], BetterSpotifyCard.prototype, "loadingLiked");
+__decorateClass([
+  r()
+], BetterSpotifyCard.prototype, "loadingSearch");
+__decorateClass([
+  r()
+], BetterSpotifyCard.prototype, "loadingDevices");
+__decorateClass([
+  r()
+], BetterSpotifyCard.prototype, "searchQuery");
+__decorateClass([
+  r()
+], BetterSpotifyCard.prototype, "currentPosition");
+__decorateClass([
+  r()
+], BetterSpotifyCard.prototype, "volumeMenuOpen");
+__decorateClass([
+  r()
+], BetterSpotifyCard.prototype, "localVolume");
+if (!customElements.get("better-spotify-card")) {
+  customElements.define("better-spotify-card", BetterSpotifyCard);
+}
+window.customCards = window.customCards || [];
+const cardAlreadyRegistered = window.customCards.some(
+  (c2) => c2.type === "better-spotify-card"
+);
+if (!cardAlreadyRegistered) {
+  window.customCards.push({
+    type: "better-spotify-card",
+    name: "Better Spotify Card",
+    description: "Lecteur Spotify élégant style Android avec popup type Bubble-Card",
+    preview: true,
+    documentationURL: "https://github.com/lmindwarel/better-spotify-card"
+  });
+}
+console.info(
+  "%c BETTER-SPOTIFY-CARD %c v1.8.1 ",
+  "color: white; background: #1DB954; font-weight: 700; border-radius: 3px 0 0 3px;",
+  "color: white; background: #282828; font-weight: 700; border-radius: 0 3px 3px 0;"
+);
+export {
+  BetterSpotifyCard
+};
 //# sourceMappingURL=better-spotify-card.js.map
