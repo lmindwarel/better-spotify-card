@@ -8,6 +8,14 @@ A sleek, responsive, and feature-rich **Spotify Lovelace card** for [Home Assist
 
 ---
 
+## Sreenshots
+### Card:
+<img width="554" height="118" alt="Capture d’écran du 2026-11-11 15-53-33" src="https://github.com/user-attachments/assets/670c5947-b360-473a-8b7f-9c8f09b76aa8" />
+
+### Popup:
+<img width="1898" height="1039" alt="image" src="https://github.com/user-attachments/assets/baa320af-753b-495b-9afc-f8589a5c9f40" />
+
+
 ## ✨ Features
 
 - 📱 **Mini Dashboard Player**:
