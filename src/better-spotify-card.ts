@@ -265,10 +265,13 @@ export class BetterSpotifyCard extends LitElement {
   }
 
   private getTargetDeviceId(): string | undefined {
+    const defaultDev = this.getDefaultDevice();
+    if (defaultDev) return defaultDev;
+
     if (!this.hass || !this.config?.entity) return undefined;
     const entity = this.hass.states[this.config.entity];
     if (entity?.attributes?.source) return undefined;
-    return this.getDefaultDevice() || this.devices[0]?.id || this.devices[0]?.name;
+    return this.devices[0]?.id || this.devices[0]?.name;
   }
 
   private async fetchLikedTracks(): Promise<void> {

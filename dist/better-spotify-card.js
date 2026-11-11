@@ -2727,10 +2727,12 @@ const _BetterSpotifyCard = class _BetterSpotifyCard extends i {
   }
   getTargetDeviceId() {
     var _a2, _b, _c, _d;
+    const defaultDev = this.getDefaultDevice();
+    if (defaultDev) return defaultDev;
     if (!this.hass || !((_a2 = this.config) == null ? void 0 : _a2.entity)) return void 0;
     const entity = this.hass.states[this.config.entity];
     if ((_b = entity == null ? void 0 : entity.attributes) == null ? void 0 : _b.source) return void 0;
-    return this.getDefaultDevice() || ((_c = this.devices[0]) == null ? void 0 : _c.id) || ((_d = this.devices[0]) == null ? void 0 : _d.name);
+    return ((_c = this.devices[0]) == null ? void 0 : _c.id) || ((_d = this.devices[0]) == null ? void 0 : _d.name);
   }
   async fetchLikedTracks() {
     if (this.loadingLiked) return;
