@@ -644,13 +644,14 @@ class SpotifyService {
    */
   static async getConnectDevices(hass, entityId) {
     var _a2, _b;
+    let devices = [];
     try {
       const res = await this.callSpotifyPlusWS(hass, "get_spotify_connect_devices", entityId, {
         refresh: true
       });
       const rawDevices = ((_a2 = res == null ? void 0 : res.result) == null ? void 0 : _a2.devices) || (res == null ? void 0 : res.result) || [];
-      if (Array.isArray(rawDevices)) {
-        return rawDevices.map((d2) => ({
+      if (Array.isArray(rawDevices) && rawDevices.length > 0) {
+        devices = rawDevices.map((d2) => ({
           id: d2.id || d2.device_id || d2.name,
           name: d2.name || "Appareil Spotify",
           type: d2.type || "Speaker",
@@ -664,15 +665,34 @@ class SpotifyService {
     } catch (e2) {
       console.warn("[BetterSpotifyCard] Falling back to entity source_list for connect devices");
     }
-    const entity = hass.states[entityId];
-    if ((_b = entity == null ? void 0 : entity.attributes) == null ? void 0 : _b.source_list) {
-      const currentSource = entity.attributes.source;
-      return entity.attributes.source_list.map((name) => ({
-        id: name,
-        name,
-        type: "Speaker",
-        is_active: name === currentSource
-      }));
+    if (devices.length === 0) {
+      const entity = hass.states[entityId];
+      if (((_b = entity == null ? void 0 : entity.attributes) == null ? void 0 : _b.source_list) && entity.attributes.source_list.length > 0) {
+        const currentSource = entity.attributes.source;
+        devices = entity.attributes.source_list.map((name) => ({
+          id: name,
+          name,
+          type: "Speaker",
+          is_active: name === currentSource
+        }));
+      }
+    }
+    if (devices.length > 0) {
+      try {
+        localStorage.setItem("better_spotify_cached_devices", JSON.stringify(devices));
+      } catch (_2) {
+      }
+      return devices;
+    }
+    try {
+      const cached = localStorage.getItem("better_spotify_cached_devices");
+      if (cached) {
+        const parsed = JSON.parse(cached);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          return parsed;
+        }
+      }
+    } catch (_2) {
     }
     return [];
   }

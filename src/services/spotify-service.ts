@@ -58,14 +58,15 @@ export class SpotifyService {
     hass: HomeAssistant,
     entityId: string
   ): Promise<SpotifyConnectDevice[]> {
+    let devices: SpotifyConnectDevice[] = [];
     try {
       const res = await this.callSpotifyPlusWS(hass, 'get_spotify_connect_devices', entityId, {
         refresh: true,
       });
 
       const rawDevices = res?.result?.devices || res?.result || [];
-      if (Array.isArray(rawDevices)) {
-        return rawDevices.map((d: any) => ({
+      if (Array.isArray(rawDevices) && rawDevices.length > 0) {
+        devices = rawDevices.map((d: any) => ({
           id: d.id || d.device_id || d.name,
           name: d.name || 'Appareil Spotify',
           type: d.type || 'Speaker',
@@ -81,16 +82,36 @@ export class SpotifyService {
     }
 
     // Fallback using standard HA entity source_list
-    const entity = hass.states[entityId];
-    if (entity?.attributes?.source_list) {
-      const currentSource = entity.attributes.source;
-      return entity.attributes.source_list.map((name: string) => ({
-        id: name,
-        name: name,
-        type: 'Speaker',
-        is_active: name === currentSource,
-      }));
+    if (devices.length === 0) {
+      const entity = hass.states[entityId];
+      if (entity?.attributes?.source_list && entity.attributes.source_list.length > 0) {
+        const currentSource = entity.attributes.source;
+        devices = entity.attributes.source_list.map((name: string) => ({
+          id: name,
+          name: name,
+          type: 'Speaker',
+          is_active: name === currentSource,
+        }));
+      }
     }
+
+    if (devices.length > 0) {
+      try {
+        localStorage.setItem('better_spotify_cached_devices', JSON.stringify(devices));
+      } catch (_) {}
+      return devices;
+    }
+
+    // Secondary fallback: restore from cached devices if available
+    try {
+      const cached = localStorage.getItem('better_spotify_cached_devices');
+      if (cached) {
+        const parsed = JSON.parse(cached);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          return parsed;
+        }
+      }
+    } catch (_) {}
 
     return [];
   }
